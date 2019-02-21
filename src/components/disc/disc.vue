@@ -1,15 +1,7 @@
 <template>
     <transition name="slide">
         <div class="disc">
-            <div class="header">
-                <div class="back" @click="back">
-                    <i class="icon-2fanhui"></i>
-                </div>
-                <div class="title">{{'歌单'}}</div>
-                <div class="player" @click="setFullScreen(true)">
-                    <i class="icon-zuijinbofang" :class="playIcon"></i>
-                </div>
-            </div>
+            <c-header title="歌单" icon="icon-2fanhui" :back="back"></c-header>
             <div class="scroll-wrapper">
                 <scroll :data="discDetail.songs" :refreshDelay="100" ref="scroll" class="scroll">
                     <div>
@@ -25,8 +17,8 @@
                                 </div>
                             </div>
                             <div class="tab">
-                                <div class="item">
-                                    <i class="icon-tianjiawenjianjia"></i>
+                                <div class="item" @click="toggleFavoriteDisc">
+                                    <i :class="isFavoriteIcon"></i>
                                     <p class="text">{{discDetail.subscribedCount}}</p>
                                 </div>
                                 <div class="item">
@@ -68,6 +60,7 @@ import { playMode } from "common/js/config";
 import { createSong } from "common/js/song";
 import songList from "base/song-list/song-list";
 import Scroll from "base/scroll/scroll";
+import CHeader from "components/header/header";
 
 export default {
     data() {
@@ -75,10 +68,34 @@ export default {
             discDetail: {}
         };
     },
+    computed: {
+        isFavoriteIcon() {
+            return this.isFavoriteDisc
+                ? "icon-ic_folder_special_px"
+                : "icon-tianjiawenjianjia";
+        },
+        isFavoriteDisc() {
+            let isF = this.favoriteDisc.findIndex(v => {
+                return v.id == this.disc;
+            });
+            return isF > -1;
+        },
+        playIcon() {
+            return this.playing ? "play" : "play pause";
+        },
+        ...mapGetters(["disc", "mode", "playing", "favoriteDisc"])
+    },
     created() {
         this._getDiscList(this.disc);
     },
     methods: {
+        toggleFavoriteDisc() {
+            if (this.isFavoriteDisc) {
+                this.deleteFD(this.discDetail);
+            } else {
+                this.saveFD(this.discDetail);
+            }
+        },
         playAll() {
             let index;
             if (this.mode === playMode.random) {
@@ -89,12 +106,16 @@ export default {
                 index = 0;
             }
             this.selectPlay({ list: this.discDetail.songs, index });
+            this.saveDiscHistory(this.discDetail);
         },
         setPlayList(item, index) {
             this.selectPlay({ list: this.discDetail.songs, index });
+            this.saveDiscHistory(this.discDetail);
         },
         refresh() {
-            this.$refs.scroll.refresh();
+            try {
+                this.$refs.scroll.refresh();
+            } catch (error) {}
         },
         setPlayMv(id) {
             this.playMv(id);
@@ -112,6 +133,7 @@ export default {
         },
         _normalize(list) {
             let ret = {};
+            ret.id = this.disc;
             ret.creatorName = list.creator.nickname;
             ret.creatorAvat = list.creator.avatarUrl;
             ret.discName = list.name;
@@ -144,20 +166,21 @@ export default {
                 }
             });
         },
-        ...mapActions(["playMv", "selectPlay"]),
+        ...mapActions([
+            "playMv",
+            "selectPlay",
+            "saveFD",
+            "deleteFD",
+            "saveDiscHistory"
+        ]),
         ...mapMutations({
             setFullScreen: "SET_FULL_SCREEN"
         })
     },
-    computed: {
-        playIcon() {
-            return this.playing ? "play" : "play pause";
-        },
-        ...mapGetters(["disc", "mode", "playing"])
-    },
     components: {
         songList,
-        Scroll
+        Scroll,
+        CHeader
     }
 };
 </script>
@@ -208,7 +231,7 @@ export default {
                 &.play
                     animation rotate 20s linear infinite
                 &.pause
-                    animation-play-state paused                
+                    animation-play-state paused
     .scroll-wrapper
         position fixed
         top 44px
@@ -275,14 +298,15 @@ export default {
                         align-self stretch
                         .icon-fenxiang, .icon-xiazai
                             font-size 18px
+                        .icon-ic_folder_special_px
+                            color red
                     .text
                         padding-top 10px
                         font-size 12px
-
 @keyframes rotate
     0%
         transform rotate(0)
     100%
-        transform rotate(360deg)                        
+        transform rotate(360deg)
 </style>
 

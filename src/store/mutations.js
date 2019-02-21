@@ -32,11 +32,30 @@ const mutations = {
   [types.SET_PLAY_MODE](state, mode) {
     state.mode = mode
   },
-  
+
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index
   },
 
+  [types.SET_SONG_HISTORY](state, history) {
+    state.songHistory = history
+  },
+
+  [types.SET_DISC_HISTORY](state, history) {
+    state.discHistory = history
+  },
+
+  [types.SET_FAVORITE_MV](state, list) {
+    state.favoriteMv = list
+  },
+
+  [types.SET_FAVORITE_DISC](state, list) {
+    state.favoriteDisc = list
+  },
+
+  [types.SET_FAVORITE_SONG](state, list) {
+    state.favoriteSong = list
+  },
 }
 
 export default mutations

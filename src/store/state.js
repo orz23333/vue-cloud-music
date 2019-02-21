@@ -3,9 +3,14 @@ import {
 } from 'common/js/config'
 
 import {
+  loadPlay,
   loadPlaylist,
+  loadPlayDisc,
   loadSequenceList,
-  loadCurrentIndex
+  loadCurrentIndex,
+  loadFavorite,
+  loadFavoriteMv,
+  loadFavoriteDisc
 } from "common/js/cache";
 
 const state = {
@@ -17,8 +22,12 @@ const state = {
   playlist: loadPlaylist(),
   sequenceList: loadSequenceList(),
   mode: playMode.sequence,
-  currentIndex: loadCurrentIndex()
-
+  currentIndex: loadCurrentIndex(),
+  songHistory: loadPlaylist(),
+  discHistory: loadPlayDisc(),
+  favoriteSong: loadFavorite(),
+  favoriteMv:loadFavoriteMv(),
+  favoriteDisc: loadFavoriteDisc()
 }
 
 export default state

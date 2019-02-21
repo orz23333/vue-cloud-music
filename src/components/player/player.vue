@@ -22,6 +22,14 @@
                     </div>
                 </div>
                 <div class="bottom">
+                    <div class="minioperators">
+                        <div class="icon" @click="toggleFavoriteSong">
+                            <i :class="isFavoriteIcon"></i>
+                        </div>
+                        <div class="icon">
+                            <i class="icon-comment-o"></i>
+                        </div>
+                    </div>
                     <div class="progress-wrapper">
                         <span class="time time-l">{{formatTime(currentTime * 1000)}}</span>
                         <div class="progress-bar-wrapper">
@@ -43,7 +51,7 @@
                             <i class="icon-xiayiqu" @click="next"></i>
                         </div>
                         <div class="icon i-right">
-                            <i class="icon-fenlei-copy-copy"></i>
+                            <i class="icon-fenlei-copy-copy" @click="show"></i>
                         </div>
                     </div>
                 </div>
@@ -57,11 +65,13 @@
             @timeupdate="updateTime"
             @ended="ended"
         ></audio>
+        <playlist ref="playlist"></playlist>
     </div>
 </template>
 
 <script>
 import ProgressBar from "base/progress-bar/progress-bar";
+import Playlist from "components/playlist/playlist";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import { playMode } from "common/js/config";
 import {
@@ -78,6 +88,15 @@ export default {
         };
     },
     computed: {
+        isFavoriteSong() {
+            let index = this.favoriteSong.findIndex(v => {
+                return v.id == this.currentSong.id;
+            });
+            return index > -1;
+        },
+        isFavoriteIcon() {
+            return this.isFavoriteSong ? "icon-shoucang" : "icon-shoucang1";
+        },
         modeIcon() {
             return this.mode === playMode.sequence
                 ? "icon-shunxubofang"
@@ -105,10 +124,21 @@ export default {
             "mode",
             "currentIndex",
             "currentSong",
-            "playMv"
+            "playMv",
+            "favoriteSong"
         ])
     },
     methods: {
+        toggleFavoriteSong() {
+            if (this.isFavoriteSong) {
+                this.deleteFS(this.currentSong);
+            } else {
+                this.saveFS(this.currentSong);
+            }
+        },
+        show() {
+            this.$refs.playlist.show();
+        },
         onProgressBarChange(percent) {
             const currentTime = (this.currentSong.duration * percent) / 1000;
             this.$refs.audio.currentTime = currentTime;
@@ -128,10 +158,6 @@ export default {
         },
         togglePlay() {
             this.setPlayingState(!this.playing);
-        },
-        changeMode() {
-            let mode = (this.mode + 1) % 3;
-            this.setPlayMode(mode);
         },
         next() {
             if (!this.songReady) {
@@ -164,7 +190,9 @@ export default {
             this.songReady = true;
         },
         error() {
-            this.songReady = true; //此方法可以不去定义和使用
+            this.songReady = true;
+            this.next();
+            console.log("出错");
         },
         hideScreen() {
             this.setFullScreen(false);
@@ -178,7 +206,7 @@ export default {
             setCurrentIndex: "SET_CURRENT_INDEX",
             setPlayMode: "SET_PLAY_MODE"
         }),
-        ...mapActions(["changeMode"])
+        ...mapActions(["changeMode", "saveSongHistory", "saveFS", "deleteFS"])
     },
     watch: {
         playlist(n) {
@@ -196,7 +224,8 @@ export default {
             }
         },
         currentSong(newS, oldS) {
-            if (newS.id === oldS.id) {
+            this.saveSongHistory(newS); //保存到历史记录
+            if (newS.id === oldS.id || !newS.id) {
                 return;
             }
             this.$nextTick(() => {
@@ -212,7 +241,8 @@ export default {
         }
     },
     components: {
-        ProgressBar
+        ProgressBar,
+        Playlist
     }
 };
 </script>
@@ -269,6 +299,9 @@ export default {
                 text-align center
                 font-size $font-size-medium
                 color rgb(230, 230, 230)
+                width 60%
+                margin 0 auto
+                no-wrap()
         .middle
             position fixed
             width 100%
@@ -337,21 +370,20 @@ export default {
             position absolute
             bottom 50px
             width 100%
-            .dot-wrapper
-                text-align center
-                font-size 0
-                .dot
-                    display inline-block
-                    vertical-align middle
-                    margin 0 4px
-                    width 8px
-                    height 8px
-                    border-radius 50%
-                    background $color-text-l
-                    &.active
-                        width 20px
-                        border-radius 5px
-                        background $color-text-ll
+            .minioperators
+                display flex
+                align-items center
+                justify-content space-between
+                margin 10px auto
+                width 30%
+                .icon
+                    flex 1 1
+                    text-align center
+                    color rgb(230, 230, 230)
+                    .icon-shoucang
+                        color red
+                    i
+                        font-size 20px
             .progress-wrapper
                 display flex
                 align-items center

@@ -1,11 +1,11 @@
 <template>
     <div class="header">
-        <div class="icon">
-            <i class="icon-huatong"></i>
+        <div class="icon" @click="back">
+            <i :class="icon"></i>
         </div>
-        <div class="title">网易云音乐</div>
+        <div class="title">{{title}}</div>
         <div class="player" @click="setFullScreen(true)" :class="playIcon">
-            <i class="icon-zuijinbofang"></i>
+            <i class="icon-yinyue"></i>
         </div>
     </div>
 </template>
@@ -13,9 +13,23 @@
 <script>
 import { mapMutations, mapGetters } from "vuex";
 export default {
+    props: {
+        title: {
+            type: String,
+            default: "网易云音乐"
+        },
+        back: {
+            type: Function,
+            default: function() {}
+        },
+        icon: {
+            type: String,
+            default: "icon-huatong"
+        }
+    },
     computed: {
         playIcon() {
-            return this.playing ? "play" : "play pause";
+            return this.playing ? "play" : "pause";
         },
         ...mapGetters(["playing"])
     },
@@ -35,11 +49,12 @@ export default {
     position relative
     height 44px
     text-align center
+    border-bottom 1px solid rgb(230, 230, 230)
     .icon
         position absolute
         top 0
         left 5px
-        .icon-huatong
+        i
             display block
             padding 10px
             font-size 24px
@@ -57,7 +72,7 @@ export default {
             animation rotate 20s linear infinite
         &.pause
             animation-play-state paused
-        .icon-zuijinbofang
+        .icon-yinyue
             display block
             font-size 24px
             color black

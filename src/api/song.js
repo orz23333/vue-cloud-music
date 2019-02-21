@@ -26,7 +26,10 @@ export function getLyric(mid) {
 export function getUrl(id) {
   const url = 'http://localhost:3000/song/url'
 
-  const data = { id }
+  const data = {
+    id,
+    br: 320000
+  }
 
   return axios.get(url, {
     params: data

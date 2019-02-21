@@ -17,7 +17,7 @@
                         <h2 class="title">
                             <i class="icon-MV"></i>
                             <span>{{mvDetail.name}}</span>
-                            <i class="icon-shoucang1"></i>
+                            <i :class="isFavoriteIcon" @click="toggleFavoriteMv"></i>
                         </h2>
                         <p class="singer">歌手：{{mvDetail.artistName}}</p>
                         <div class="center">
@@ -43,7 +43,7 @@
 import Comments from "components/comments/comments";
 import Scroll from "base/scroll/scroll";
 import Mvplayer from "components/mvplayer/mvplayer";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { getMvComments, getMvDetail } from "api/mv";
 import { RES_OK } from "api/config";
 
@@ -66,6 +66,22 @@ export default {
             } //默认paddingtop为%56
         };
     },
+    computed: {
+        isFavoriteIcon() {
+            return this.isFavoriteMv ? "icon-shoucang" : "icon-shoucang1";
+        },
+        isFavoriteMv() {
+            let index = this.favoriteMv.findIndex(v => {
+                return (v.id == this.mvDetail.id);
+            });
+
+            return index > -1;
+        },
+        allComments() {
+            return this.comments.concat(this.hotComments);
+        },
+        ...mapGetters(["mvId", "playMv", "favoriteMv"])
+    },
     created() {
         if (!this.playMv) {
             this.$router.push("/findmusic/vedio");
@@ -74,6 +90,13 @@ export default {
         this._getComments(this.mvId);
     },
     methods: {
+        toggleFavoriteMv() {
+            if (this.isFavoriteMv) {
+                this.deleteFM(this.mvDetail);
+            } else {
+                this.saveFM(this.mvDetail);
+            }
+        },
         fixTop(height) {
             this.paddingTop.paddingTop = height + "px";
             setTimeout(() => {
@@ -114,16 +137,8 @@ export default {
         },
         scroll(pos) {
             this.scrollY = pos.y;
-        }
-    },
-    computed: {
-        allComments() {
-            return this.comments.concat(this.hotComments);
         },
-        fixed() {
-            return "sdf";
-        },
-        ...mapGetters(["mvId", "playMv"])
+        ...mapActions(["saveFM", "deleteFM"])
     },
     watch: {
         mvId(newId) {
@@ -173,6 +188,10 @@ export default {
                 .icon-shoucang1
                     font-size 18px
                     line-height 30px
+                .icon-shoucang
+                    font-size 18px
+                    line-height 30px
+                    color red                    
             .singer
                 margin-bottom 15px
             .center

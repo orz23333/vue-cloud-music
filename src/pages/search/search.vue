@@ -1,6 +1,6 @@
 <template>
     <div>
-        <c-header></c-header>
+        <c-header icon='icon-fangdajing'></c-header>
         <div class="search-input-wrapper">
             <div class="search-input">
                 <i class="icon-fangdajing"></i>

@@ -3,10 +3,11 @@
         <ul>
             <li @click="selectItem(song, index)" class="item" v-for="(song, index) in songs">
                 <div class="rank">
-                    <span class="text">{{ index + 1}}</span>
+                    <span v-if="currentSong.id !== song.id">{{ index + 1}}</span>
+                    <span class="icon-icon-test" v-else></span>
                 </div>
                 <div class="content">
-                    <h2 class="name">
+                    <h2 class="name"  :class="{'current' : currentSong.id === song.id}">
                         {{song.name}}
                         <span v-if="song.alia">({{song.alia}})</span>
                     </h2>
@@ -23,12 +24,16 @@
 
 <script type="text/ecmascript-6">
 import Loading from "base/loading/loading";
+import { mapGetters } from "vuex";
 export default {
     props: {
         songs: {
             type: Array,
             default: () => []
         }
+    },
+    computed: {
+        ...mapGetters(["currentSong"])
     },
     methods: {
         selectItem(item, index) {
@@ -77,6 +82,9 @@ export default {
             text-align center
             color #999
             font-size 18px
+            .icon-icon-test
+                font-size 25px
+                color red
         .content
             flex 1
             line-height 20px
@@ -86,6 +94,8 @@ export default {
             .name
                 no-wrap()
                 color $color-text
+                &.current
+                    color red                
                 span
                     color #999
             .desc
