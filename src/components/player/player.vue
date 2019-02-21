@@ -26,7 +26,7 @@
                         <div class="icon" @click="toggleFavoriteSong">
                             <i :class="isFavoriteIcon"></i>
                         </div>
-                        <div class="icon">
+                        <div class="icon" @click="showComments">
                             <i class="icon-comment-o"></i>
                         </div>
                     </div>
@@ -66,10 +66,19 @@
             @ended="ended"
         ></audio>
         <playlist ref="playlist"></playlist>
+        <transition name="slide">
+            <comments-page
+                v-if="isCommentShow"
+                @hide="hideComments"
+                commentsType="song"
+                :id="currentSong.id"
+            ></comments-page>
+        </transition>
     </div>
 </template>
 
 <script>
+import CommentsPage from "components/comments-page/comments-page";
 import ProgressBar from "base/progress-bar/progress-bar";
 import Playlist from "components/playlist/playlist";
 import { mapGetters, mapMutations, mapActions } from "vuex";
@@ -84,7 +93,8 @@ export default {
     data() {
         return {
             songReady: false,
-            currentTime: 0
+            currentTime: 0,
+            isCommentShow: false
         };
     },
     computed: {
@@ -129,6 +139,12 @@ export default {
         ])
     },
     methods: {
+        hideComments() {
+            this.isCommentShow = false;
+        },
+        showComments() {
+            this.isCommentShow = true;
+        },
         toggleFavoriteSong() {
             if (this.isFavoriteSong) {
                 this.deleteFS(this.currentSong);
@@ -242,7 +258,8 @@ export default {
     },
     components: {
         ProgressBar,
-        Playlist
+        Playlist,
+        CommentsPage
     }
 };
 </script>

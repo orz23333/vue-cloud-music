@@ -1,11 +1,13 @@
 <template>
-    <div class="item" v-for="(item, index) in list">
-        <div class="rank">
-            <img src alt>
-        </div>
-        <div class="content">
-            <h2 class="name"></h2>
-            <p class="desc"></p>
+    <div>
+        <div class="item" v-for="(item, index) in list">
+            <div class="rank">
+                <img src alt>
+            </div>
+            <div class="content">
+                <h2 class="name"></h2>
+                <p class="desc"></p>
+            </div>
         </div>
     </div>
 </template>

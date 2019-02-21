@@ -21,7 +21,7 @@
                                     <i :class="isFavoriteIcon"></i>
                                     <p class="text">{{discDetail.subscribedCount}}</p>
                                 </div>
-                                <div class="item">
+                                <div class="item" @click="showComments">
                                     <i class="icon-comment-o"></i>
                                     <p class="text">{{discDetail.commentCount}}</p>
                                 </div>
@@ -47,6 +47,12 @@
                     </div>
                 </scroll>
             </div>
+            <comments-page
+                v-if="isCommentShow"
+                @hide="hideComments"
+                commentsType="disc"
+                :id="disc"
+            ></comments-page>
         </div>
     </transition>
 </template>
@@ -58,6 +64,7 @@ import { RES_OK } from "api/config";
 import { getUrl } from "api/song";
 import { playMode } from "common/js/config";
 import { createSong } from "common/js/song";
+import CommentsPage from "components/comments-page/comments-page";
 import songList from "base/song-list/song-list";
 import Scroll from "base/scroll/scroll";
 import CHeader from "components/header/header";
@@ -65,7 +72,8 @@ import CHeader from "components/header/header";
 export default {
     data() {
         return {
-            discDetail: {}
+            discDetail: {},
+            isCommentShow: false
         };
     },
     computed: {
@@ -89,6 +97,12 @@ export default {
         this._getDiscList(this.disc);
     },
     methods: {
+        showComments() {
+            this.isCommentShow = true;
+        },
+        hideComments() {
+            this.isCommentShow = false;
+        },
         toggleFavoriteDisc() {
             if (this.isFavoriteDisc) {
                 this.deleteFD(this.discDetail);
@@ -180,7 +194,8 @@ export default {
     components: {
         songList,
         Scroll,
-        CHeader
+        CHeader,
+        CommentsPage
     }
 };
 </script>
