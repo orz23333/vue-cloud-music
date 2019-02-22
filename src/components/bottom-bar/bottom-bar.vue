@@ -33,6 +33,7 @@ export default {};
     width 100%
     line-height 44px
     border-top 1px solid rgb(230, 230, 230)
+    background-color #fff
     .flex
         display flex
         .bar-item

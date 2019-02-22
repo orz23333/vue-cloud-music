@@ -208,7 +208,7 @@ export default {
         },
         error() {
             this.songReady = true;
-            this.next();
+            // this.next();
             console.log("出错");
         },
         hideScreen() {

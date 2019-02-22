@@ -2,7 +2,9 @@
     <transition name="slide">
         <div class="like">
             <c-header icon="icon-2fanhui" :back="back" title="收藏歌单"></c-header>
-            <list-bar :list="list" @selectItem="selectDisc"></list-bar>
+            <scroll class="scroll-wrapper" :data="list">
+                <list-bar :list="list" @selectItem="selectDisc"></list-bar>
+            </scroll>
             <router-view></router-view>
         </div>
     </transition>
@@ -11,6 +13,7 @@
 <script>
 import ListBar from "base/list-bar/list-bar";
 import CHeader from "components/header/header";
+import Scroll from "base/scroll/scroll";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
     computed: {
@@ -42,7 +45,8 @@ export default {
     },
     components: {
         ListBar,
-        CHeader
+        CHeader,
+        Scroll
     }
 };
 </script>
@@ -60,5 +64,11 @@ export default {
     right 0
     z-index 1
     background-color #fff
+    .scroll-wrapper
+        position absolute
+        top 44px
+        bottom 0
+        left 0
+        right 0
 </style>
 

@@ -50,6 +50,8 @@ export default {
     height 44px
     text-align center
     border-bottom 1px solid rgb(230, 230, 230)
+    background-color #fff
+    z-index 1
     .icon
         position absolute
         top 0

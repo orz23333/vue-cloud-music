@@ -39,10 +39,11 @@ export default {
 .item
     display flex
     align-items center
-    box-sizing border-box
     height 64px
-    margin 10px
+    padding 10px 10px 0
     font-size 14px
+    &:last-child
+      padding 10px
     .rank
         flex 0
         text-align center
