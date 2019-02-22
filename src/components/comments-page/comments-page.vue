@@ -13,7 +13,7 @@
             @scrollToEnd="getMoreComments"
         >
             <div class="scroll">
-                <list-bar></list-bar>
+                <list-bar :list="list"></list-bar>
                 <comments
                     :hasMore="hasMore"
                     :comments="comments"
@@ -42,7 +42,8 @@ export default {
         id: {
             type: Number,
             default: 64293
-        }
+        },
+        item: Object
     },
     data() {
         return {
@@ -53,6 +54,22 @@ export default {
             pullup: true,
             page: 0
         };
+    },
+    computed: {
+        list() {
+            let obj = {};
+            if (this.commentsType === "song") {
+                obj.image = this.item.image;
+                obj.name = this.item.name;
+                obj.desc = this.item.singer;
+            } else {
+                obj.image = this.item.discPic;
+                obj.name = this.item.discName;
+                obj.desc = "by " + this.item.creatorName;
+            }
+
+            return [obj];
+        }
     },
     created() {
         if (this.commentsType === "song") {
@@ -70,8 +87,8 @@ export default {
                 if (res.code === RES_OK) {
                     this.hasMore = res.more;
                     this.total = res.total;
-                    this.comments = this.comments.concat(res.comments);
-                    this.hotComments = this.hotComments.concat(res.hotComments);
+                    this.comments = res.comments;
+                    this.hotComments = res.hotComments;
                 }
             });
         },
@@ -80,8 +97,8 @@ export default {
                 if (res.code === RES_OK) {
                     this.hasMore = res.more;
                     this.total = res.total;
-                    this.comments = this.comments.concat(res.comments);
-                    this.hotComments = this.hotComments.concat(res.hotComments);
+                    this.comments = res.comments;
+                    this.hotComments = res.hotComments;
                 }
             });
         },
@@ -106,6 +123,15 @@ export default {
                         this.comments = this.comments.concat(res.comments);
                     }
                 });
+            }
+        }
+    },
+    watch: {
+        id(newId) {
+            if (this.commentsType === "song") {
+                this._getSongComments({ id: newId });
+            } else {
+                this._getDiscComments({ id: newId });
             }
         }
     },

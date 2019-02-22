@@ -157,7 +157,7 @@ export default {
             const barWidth =
                 this.$refs.progressBar.clientWidth - progressBtnWidth;
             const percent = this.$refs.progress.clientWidth / barWidth;
-            let time = ((this.mvDetail.duration * percent) / 1000).toFixed(0);
+            let time = (this.$refs.video.duration * percent).toFixed(0);
             this.$refs.video.currentTime = time;
             this.$refs.video.play();
         },
@@ -241,7 +241,11 @@ export default {
             return this._formalTime(this.currentTime * 1000);
         },
         duration() {
-            return this._formalTime(this.mvDetail.duration);
+            if (this.loading) {
+                return;
+            }
+            let time = this.$refs.video.duration;
+            return this._formalTime(time * 1000);
         },
         playCls() {
             let cls;
@@ -268,7 +272,7 @@ export default {
             if (!this.touch.init && this.showControl) {
                 const barWidth =
                     this.$refs.progressBar.clientWidth - progressBtnWidth;
-                const percent = (newC * 1000) / this.mvDetail.duration;
+                const percent = newC / this.$refs.video.duration;
                 const offsetWidth = percent * barWidth;
                 this._offset(offsetWidth);
             }

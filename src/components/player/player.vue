@@ -72,6 +72,7 @@
                 @hide="hideComments"
                 commentsType="song"
                 :id="currentSong.id"
+                :item="currentSong"
             ></comments-page>
         </transition>
     </div>

@@ -52,6 +52,7 @@
                 @hide="hideComments"
                 commentsType="disc"
                 :id="disc"
+                :item="discDetail"
             ></comments-page>
         </div>
     </transition>
@@ -141,6 +142,7 @@ export default {
             getDiscList(id).then(res => {
                 if (res.code === RES_OK) {
                     this.discDetail = this._normalize(res.playlist);
+                    this.discDetail.id = this.disc;
                     this._getUrl(this.discDetail.songs);
                 }
             });

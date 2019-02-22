@@ -23,10 +23,10 @@ const state = {
   sequenceList: loadSequenceList(),
   mode: playMode.sequence,
   currentIndex: loadCurrentIndex(),
-  songHistory: loadPlaylist(),
+  songHistory: loadPlay(),
   discHistory: loadPlayDisc(),
   favoriteSong: loadFavorite(),
-  favoriteMv:loadFavoriteMv(),
+  favoriteMv: loadFavoriteMv(),
   favoriteDisc: loadFavoriteDisc()
 }
 

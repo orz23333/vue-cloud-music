@@ -1,12 +1,15 @@
 <template>
     <div>
-        <div class="item" v-for="(item, index) in list">
+        <div class="item" v-for="(item, index) in list" @click="selectItem(item.id)">
             <div class="rank">
-                <img src alt>
+                <img v-lazy="item.image" alt>
             </div>
             <div class="content">
-                <h2 class="name"></h2>
-                <p class="desc"></p>
+                <h2 class="name">
+                    <i :class="icon"></i>
+                    {{item.name}}
+                </h2>
+                <p class="desc">{{item.desc}}</p>
             </div>
         </div>
     </div>
@@ -18,6 +21,15 @@ export default {
         list: {
             type: Array,
             default: () => []
+        },
+        icon: {
+            type: String,
+            default: ""
+        }
+    },
+    methods: {
+        selectItem(id) {
+            this.$emit("selectItem", id);
         }
     }
 };
@@ -29,22 +41,22 @@ export default {
     align-items center
     box-sizing border-box
     height 64px
+    margin 10px
     font-size 14px
     .rank
-        flex 0 0 25px
-        width 25px
-        margin 13px
+        flex 0
         text-align center
         color #999
         font-size 18px
-        .icon-icon-test
-            font-size 25px
-            color red
+        img
+            height 64px
     .content
-        flex 1
+        flex 3
         line-height 20px
         overflow hidden
+        align-self stretch
         padding-bottom 5px
+        padding-left 10px
         border-bottom 1px solid rgb(240, 240, 240)
         .name
             no-wrap()
@@ -53,11 +65,14 @@ export default {
                 color red
             span
                 color #999
+            i
+                font-size 20px
         .desc
             no-wrap()
             margin-top 4px
             color #999
             width 70%
+            font-size 12px
     .mv
         font-size 20px
         padding 14.5px 0

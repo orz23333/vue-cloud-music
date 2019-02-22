@@ -126,7 +126,6 @@ export default {
             .header
                 display flex
                 flex-direction row
-                height 40px
                 line-height 20px
                 .img
                     width 40px

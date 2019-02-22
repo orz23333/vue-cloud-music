@@ -51,6 +51,30 @@ const Rank = (resolve) => {
   })
 }
 
+const FavoriteSong = (resolve) => {
+  import('components/favorite-song/favorite-song').then((module) => {
+    resolve(module)
+  })
+}
+
+const FavoriteDisc = (resolve) => {
+  import('components/favorite-disc/favorite-disc').then((module) => {
+    resolve(module)
+  })
+}
+
+const FavoriteMv = (resolve) => {
+  import('components/favorite-mv/favorite-mv').then((module) => {
+    resolve(module)
+  })
+}
+
+const PlayHistory = (resolve) => {
+  import('components/play-history/play-history').then((module) => {
+    resolve(module)
+  })
+}
+
 import Mvplayer from "components/mvplayer/mvplayer";
 
 export default new Router({
@@ -85,7 +109,28 @@ export default new Router({
     },
     {
       path: '/mymusic',
-      component: MyMusic
+      component: MyMusic,
+      children: [{
+          path: 'favoriteSong',
+          component: FavoriteSong
+        },
+        {
+          path: 'favoriteDisc',
+          component: FavoriteDisc,
+          children: [{
+            path: ':id',
+            component: Disc
+          }]
+        },
+        {
+          path: 'favoriteMv',
+          component: FavoriteMv,
+        },
+        {
+          path: 'playHistory',
+          component: PlayHistory
+        }
+      ]
     },
     {
       path: '/search',

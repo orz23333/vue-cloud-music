@@ -107,7 +107,7 @@ export default {
             this.showFlag = true;
             setTimeout(() => {
                 this.$refs.listContent.refresh();
-                this.$refs.listContent.scrollToElement(".currentli", 300);
+                this.$refs.listContent.scrollToElement(".currentli", 0);
             }, 20);
         },
         hide() {
