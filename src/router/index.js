@@ -75,6 +75,12 @@ const PlayHistory = (resolve) => {
   })
 }
 
+const SongHistory = (resolve) => [
+  import('components/song-history/song-history').then(module => {
+    resolve(module)
+  })
+]
+
 import Mvplayer from "components/mvplayer/mvplayer";
 
 export default new Router({
@@ -128,7 +134,16 @@ export default new Router({
         },
         {
           path: 'playHistory',
-          component: PlayHistory
+          component: PlayHistory,
+          children: [{
+              path: 'disc',
+              component: Disc
+            },
+            {
+              path: 'songHistory',
+              component: SongHistory
+            }
+          ]
         }
       ]
     },

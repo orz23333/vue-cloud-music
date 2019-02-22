@@ -1,29 +1,31 @@
 <template>
-    <div class="comments-wrapper">
-        <div class="header">
-            <div class="icon" @click="hide">
-                <i class="icon-2fanhui"></i>
+    <transition name="slide">
+        <div class="comments-wrapper">
+            <div class="header">
+                <div class="icon" @click="hide">
+                    <i class="icon-2fanhui"></i>
+                </div>
+                <div class="title">评论({{total}})</div>
             </div>
-            <div class="title">评论({{total}})</div>
+            <scroll
+                :data="comments"
+                class="scroll-wrapper"
+                :pullup="pullup"
+                @scrollToEnd="getMoreComments"
+            >
+                <div class="scroll">
+                    <list-bar :list="list"></list-bar>
+                    <comments
+                        :hasMore="hasMore"
+                        :comments="comments"
+                        :hotComments="hotComments"
+                        :total="total"
+                        v-if="comments"
+                    ></comments>
+                </div>
+            </scroll>
         </div>
-        <scroll
-            :data="comments"
-            class="scroll-wrapper"
-            :pullup="pullup"
-            @scrollToEnd="getMoreComments"
-        >
-            <div class="scroll">
-                <list-bar :list="list"></list-bar>
-                <comments
-                    :hasMore="hasMore"
-                    :comments="comments"
-                    :hotComments="hotComments"
-                    :total="total"
-                    v-if="comments"
-                ></comments>
-            </div>
-        </scroll>
-    </div>
+    </transition>
 </template>
 
 <script>
@@ -145,6 +147,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.slide-enter-active, .slide-leave-active
+    transition all 0.3s
+.slide-enter, .slide-leave-to
+    transform translate3d(100%, 0, 0)
 .comments-wrapper
     position fixed
     top 0

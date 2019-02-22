@@ -14,8 +14,11 @@
 import ListBar from "base/list-bar/list-bar";
 import CHeader from "components/header/header";
 import Scroll from "base/scroll/scroll";
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 export default {
+    created() {
+        // this.deleteFDOne();
+    },
     computed: {
         list() {
             let arr = [];
@@ -41,7 +44,8 @@ export default {
         },
         ...mapMutations({
             setDisc: "SET_DISC"
-        })
+        }),
+        ...mapActions(["deleteFDOne"])
     },
     components: {
         ListBar,

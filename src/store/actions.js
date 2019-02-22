@@ -111,11 +111,19 @@ export const deleteFM = function ({commit}, mv) {
 }
 
 export const saveFD = function ({commit}, disc) {
+  console.log(2);
+  
   commit(types.SET_FAVORITE_DISC, saveFavoriteDisc(disc))
 }
 
 export const deleteFD = function ({commit}, disc) {
   commit(types.SET_FAVORITE_DISC, deleteFavoriteDisc(disc))
+}
+
+export const deleteFDOne = function ({commit, state}) {
+  let copy = JSON.parse(JSON.stringify(state.favoriteDisc))
+  copy.shift()
+  commit(types.SET_FAVORITE_DISC, copy)
 }
 
 //关于播放历史部分的actions
@@ -126,3 +134,4 @@ export const saveSongHistory = function ({commit}, song) {
 export const saveDiscHistory = function ({commit}, disc) {
   commit(types.SET_DISC_HISTORY, savePlayDisc(disc))
 }
+

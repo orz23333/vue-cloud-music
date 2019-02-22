@@ -25,11 +25,11 @@
                                     <i class="icon-comment-o"></i>
                                     <p class="text">{{discDetail.commentCount}}</p>
                                 </div>
-                                <div class="item">
+                                <div class="item disable">
                                     <i class="icon-fenxiang"></i>
                                     <p class="text">{{discDetail.shareCount}}</p>
                                 </div>
-                                <div class="item">
+                                <div class="item disable">
                                     <i class="icon-xiazai"></i>
                                     <p class="text">下载</p>
                                 </div>
@@ -313,6 +313,8 @@ export default {
                         flex 1 1
                         font-size 20px
                         align-self stretch
+                        &.disable
+                            opacity 0.3
                         .icon-fenxiang, .icon-xiazai
                             font-size 18px
                         .icon-ic_folder_special_px

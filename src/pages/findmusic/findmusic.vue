@@ -1,12 +1,10 @@
 <template>
     <div>
-        <c-header></c-header>
+        <c-header title="vue-music"></c-header>
         <tab></tab>
 
-        <transition :name="name" v-on:before-enter="beforeEnter" >
-            <keep-alive>
-                <router-view></router-view>
-            </keep-alive>
+        <transition :name="name" v-on:before-enter="beforeEnter">
+            <router-view></router-view>
         </transition>
     </div>
 </template>

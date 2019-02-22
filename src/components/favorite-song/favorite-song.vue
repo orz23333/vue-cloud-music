@@ -21,15 +21,15 @@
                                     <i class="icon-ic_folder_special_px"></i>
                                     <p class="text">收藏</p>
                                 </div>
-                                <div class="item" @click="showComments">
+                                <div class="item">
                                     <i class="icon-comment-o"></i>
                                     <p class="text">评论</p>
                                 </div>
-                                <div class="item">
+                                <div class="item disable">
                                     <i class="icon-fenxiang"></i>
                                     <p class="text">分享</p>
                                 </div>
-                                <div class="item">
+                                <div class="item disable">
                                     <i class="icon-xiazai"></i>
                                     <p class="text">下载</p>
                                 </div>
@@ -47,13 +47,6 @@
                     </div>
                 </scroll>
             </div>
-            <comments-page
-                v-if="isCommentShow"
-                @hide="hideComments"
-                commentsType="disc"
-                :id="disc"
-                :item="discDetail"
-            ></comments-page>
         </div>
     </transition>
 </template>
@@ -65,7 +58,6 @@ import { RES_OK } from "api/config";
 import { getUrl } from "api/song";
 import { playMode } from "common/js/config";
 import { createSong } from "common/js/song";
-import CommentsPage from "components/comments-page/comments-page";
 import songList from "base/song-list/song-list";
 import Scroll from "base/scroll/scroll";
 import CHeader from "components/header/header";
@@ -78,25 +70,8 @@ export default {
         };
     },
     computed: {
-        isFavoriteIcon() {
-            return this.isFavoriteDisc
-                ? "icon-ic_folder_special_px"
-                : "icon-tianjiawenjianjia";
-        },
-        isFavoriteDisc() {
-            let isF = this.favoriteDisc.findIndex(v => {
-                return v.id == this.disc;
-            });
-            return isF > -1;
-        },
-        playIcon() {
-            return this.playing ? "play" : "play pause";
-        },
         ...mapGetters([
-            "disc",
             "mode",
-            "playing",
-            "favoriteDisc",
             "favoriteSong"
         ])
     },
@@ -113,12 +88,6 @@ export default {
         this._getUrl(); //歌曲地址url有有效时间限制，所以需要重新获取url
     },
     methods: {
-        showComments() {
-            this.isCommentShow = true;
-        },
-        hideComments() {
-            this.isCommentShow = false;
-        },
         playAll() {
             let index;
             if (this.mode === playMode.random) {
@@ -129,11 +98,9 @@ export default {
                 index = 0;
             }
             this.selectPlay({ list: this.discDetail.songs, index });
-            this.saveDiscHistory(this.discDetail);
         },
         setPlayList(item, index) {
             this.selectPlay({ list: this.discDetail.songs, index });
-            this.saveDiscHistory(this.discDetail);
         },
         refresh() {
             try {
@@ -165,7 +132,6 @@ export default {
                             }
                         });
                     });
-                    this.saveFD(copyFavoriteSong);
                     this.discDetail = Object.assign({}, this.discDetail, {
                         songs: copyFavoriteSong,
                         creatorName: "帅哥",
@@ -180,9 +146,6 @@ export default {
         ...mapActions([
             "playMv",
             "selectPlay",
-            "saveFD",
-            "deleteFD",
-            "saveDiscHistory"
         ]),
         ...mapMutations({
             setFullScreen: "SET_FULL_SCREEN"
@@ -191,8 +154,7 @@ export default {
     components: {
         songList,
         Scroll,
-        CHeader,
-        CommentsPage
+        CHeader
     }
 };
 </script>
@@ -308,6 +270,8 @@ export default {
                         flex 1 1
                         font-size 20px
                         align-self stretch
+                        &.disable
+                          opacity 0.3
                         .icon-fenxiang, .icon-xiazai
                             font-size 18px
                         .icon-ic_folder_special_px

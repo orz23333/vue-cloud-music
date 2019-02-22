@@ -1,4 +1,10 @@
 import storage from 'good-storage'
+import {
+  getUrl
+} from "api/song";
+import {
+  RES_OK
+} from "api/config";
 
 const SEARCH_KEY = '__search__'
 const SEARCH_MAX_LEN = 15
@@ -7,7 +13,7 @@ const PLAY_KEY = '__play__'
 const PLAY_MAX_LEN = 100
 
 const PLAY_DISC_KEY = '__playDisc__'
-const PLAY_DISC_MAX_LEN = 200
+const PLAY_DISC_MAX_LEN = 15
 
 const FAVORITE_KEY = '__favorite__'
 const FAVORITE_MAX_LEN = 200
@@ -21,6 +27,28 @@ const FAVORITE_DISC_MAX_LEN = 200
 const PLAYLIST_KEY = '__playList__';
 const SEQUENCE_LIST_KEY = '__sequenceList__';
 const CURRENT_INDEX = '__currentIndex__';
+
+const _getUrl = function (list) {
+  const ids = [];
+  list.forEach(song => {
+    ids.push(song.id);
+  });
+  const id = ids.join(",");
+  return getUrl(id).then(res => {
+    if (res.code === RES_OK) {
+      let data = res.data;
+      let copyList = JSON.parse(JSON.stringify(list)); //复制
+      copyList.forEach(song => {
+        data.forEach(v => {
+          if (v.id === song.id) {
+            song.url = v.url;
+          }
+        });
+      });
+      return Promise.resolve(copyList);
+    }
+  });
+}
 
 function insertArray(arr, val, compare, maxLen) {
   const index = arr.findIndex(compare)
