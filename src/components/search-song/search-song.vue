@@ -39,7 +39,6 @@ import Loading from "base/loading/loading";
 import NoResult from "base/no-result/no-result";
 import { search } from "api/search";
 import { RES_OK } from "api/config";
-import { debounce } from "common/js/util";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import { getUrl } from "api/song";
 
@@ -68,7 +67,7 @@ export default {
         if (!this.query || this.query === this.lastQuery) {
             return;
         }
-        this._searchSong(this.query);
+        this.getSearch(this.query);
     },
     methods: {
         select(item) {

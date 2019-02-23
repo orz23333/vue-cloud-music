@@ -40,6 +40,7 @@ export default {
 
 <style lang="stylus" scoped>
 @import '~common/stylus/mixin'
+@import '~common/stylus/variable'
 .item
     display flex
     align-items center
@@ -57,6 +58,8 @@ export default {
             height 64px
             width 64px
     .content
+        display flex
+        flex-direction column
         flex 3
         line-height 20px
         overflow hidden
@@ -65,6 +68,7 @@ export default {
         padding-left 10px
         border-bottom 1px solid rgb(240, 240, 240)
         .name
+            flex 1
             no-wrap()
             color $color-text
             i

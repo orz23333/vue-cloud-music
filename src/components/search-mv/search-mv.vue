@@ -23,7 +23,6 @@ import Loading from "base/loading/loading";
 import ListBar from "base/list-bar/list-bar";
 import { search } from "api/search";
 import { RES_OK } from "api/config";
-import { debounce } from "common/js/util";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import moment from "moment";
 
@@ -49,7 +48,7 @@ export default {
         if (!this.query || this.query === this.lastQuery) {
             return;
         }
-        this._searchMv(this.query);
+        this.getSearch(this.query);
     },
     methods: {
         selectMv(id) {
