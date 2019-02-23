@@ -68,7 +68,7 @@ export default {
         _getRecommedDisc() {
             getRecommendDisc().then(res => {
                 if (res.code === RES_OK) {
-                    this.discList = res.result.slice(0, 6);
+                    this.discList = res.result.slice(0, 9);
                 }
             });
         },
