@@ -18,6 +18,12 @@ function findIndex(list, song) {
   })
 }
 
+//选择disc操作
+export const changeDisc = function({commit, state}, id) {
+  commit(types.SET_DISC, id)
+  commit(types.SET_DISC_SHOW, true)
+}
+
 //播放mv操作
 export const playMv = function({commit, state}, id) {
   commit(types.SET_PLAYMV, true)

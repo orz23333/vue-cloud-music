@@ -81,7 +81,29 @@ const SongHistory = (resolve) => [
   })
 ]
 
-import Mvplayer from "components/mvplayer/mvplayer";
+const SearchSong = (resolve) => [
+  import('components/search-song/search-song').then(module => {
+    resolve(module)
+  })
+]
+
+const SearchSinger = (resolve) => [
+  import('components/search-singer/search-singer').then(module => {
+    resolve(module)
+  })
+]
+
+const SearchDisc = (resolve) => [
+  import('components/search-disc/search-disc').then(module => {
+    resolve(module)
+  })
+]
+
+const SearchMv = (resolve) => [
+  import('components/search-mv/search-mv').then(module => {
+    resolve(module)
+  })
+]
 
 export default new Router({
   routes: [{
@@ -93,11 +115,7 @@ export default new Router({
       component: FindMusic,
       children: [{
           path: 'music',
-          component: Music,
-          children: [{
-            path: ':id',
-            component: Disc
-          }]
+          component: Music
         },
         {
           path: 'vedio',
@@ -106,10 +124,6 @@ export default new Router({
         {
           path: 'hot',
           component: Rank,
-          children: [{
-            path: ':id',
-            component: Disc
-          }]
         }
       ]
     },
@@ -123,10 +137,6 @@ export default new Router({
         {
           path: 'favoriteDisc',
           component: FavoriteDisc,
-          children: [{
-            path: ':id',
-            component: Disc
-          }]
         },
         {
           path: 'favoriteMv',
@@ -136,20 +146,37 @@ export default new Router({
           path: 'playHistory',
           component: PlayHistory,
           children: [{
-              path: 'disc',
-              component: Disc
-            },
-            {
-              path: 'songHistory',
-              component: SongHistory
-            }
-          ]
+            path: 'songHistory',
+            component: SongHistory
+          }]
         }
       ]
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      // redirect: '/search/song/0',
+      children: [{
+          path: 'song/:query',
+          component: SearchSong,
+          props: true
+        },
+        {
+          path: 'singer/:query',
+          component: SearchSinger,
+          props: true
+        },
+        {
+          path: 'disc/:query',
+          component: SearchDisc,
+          props: true
+        },
+        {
+          path: 'mv/:query',
+          component: SearchMv,
+          props: true
+        }
+      ]
     }
   ]
 })

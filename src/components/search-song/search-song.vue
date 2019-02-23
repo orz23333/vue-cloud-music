@@ -1,15 +1,6 @@
 <template>
     <div class="suggest">
-        <ul class="tab">
-            <li
-                v-for="(item,index) of tab"
-                class="item"
-                :class="{'active' : index === activeIndex}"
-                :key="index"
-                @click="changeMode(index)"
-            >{{item}}</li>
-        </ul>
-        <!-- <scroll
+        <scroll
             :data="result"
             class="scroll-wrapper"
             ref="suggest"
@@ -19,7 +10,12 @@
         >
             <div>
                 <ul class="suggest-list" v-if="type === types[0]">
-                    <li class="suggest-item" v-for="item in result" @click="select(item)">
+                    <li
+                        class="suggest-item"
+                        v-for="item in result"
+                        @click="select(item)"
+                        :key="item.id"
+                    >
                         <div class="name">
                             <p class="text">{{item.name}}</p>
                             <p class="center">{{item.singer}}-{{item.album}}</p>
@@ -32,7 +28,12 @@
                     <loading v-show="hasMore" title></loading>
                 </ul>
                 <ul class="suggest-list" v-if="type === types[2]">
-                    <li class="suggest-item" v-for="item in result" @click="select(item)">
+                    <li
+                        class="suggest-item"
+                        v-for="item in result"
+                        @click="select(item)"
+                        :key="item.id"
+                    >
                         <list-bar :list="result"></list-bar>
                     </li>
                     <loading v-show="hasMore" title></loading>
@@ -41,11 +42,11 @@
                     <no-result title="抱歉，暂无搜索结果"></no-result>
                 </div>
             </div>
-        </scroll> -->
+        </scroll>
     </div>
 </template>
-
-<script type="text/ecmascript-6">
+ 
+<script>
 import Scroll from "base/scroll/scroll";
 import Loading from "base/loading/loading";
 import NoResult from "base/no-result/no-result";
@@ -96,7 +97,7 @@ export default {
             this.page = 0;
             this.type = 1;
             this.hasMore = true;
-            // this.$refs.suggest.scrollTo(0, 0);
+            this.$refs.suggest.scrollTo(0, 0);
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
                     this.result = this._normalizeSong(res.result.songs);
@@ -122,7 +123,7 @@ export default {
             this.page = 0;
             this.type = 1000;
             this.hasMore = true;
-            // this.$refs.suggest.scrollTo(0, 0);
+            this.$refs.suggest.scrollTo(0, 0);
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
                     this.result = this._normalizeDisc(res.result.playLists);
@@ -177,19 +178,21 @@ export default {
             return str;
         },
         _normalizeDisc(list) {
-          let ret = []
-          list.forEach(disc => {
-            let obj = {}
-            obj.id = disc.id
-            obj.image = disc.coverImgUrl
-            obj.name = disc.name
-            obj.desc = `${disc.trackCount}首音乐 播放${this._filterCount(disc.playCount)}次 by ${disc.creator.nickname}`
-          });
-          return ret
+            let ret = [];
+            list.forEach(disc => {
+                let obj = {};
+                obj.id = disc.id;
+                obj.image = disc.coverImgUrl;
+                obj.name = disc.name;
+                obj.desc = `${disc.trackCount}首音乐 播放${this._filterCount(
+                    disc.playCount
+                )}次 by ${disc.creator.nickname}`;
+            });
+            return ret;
         },
         _filterCount(count) {
-          let fCount = count / 10000
-          return this.fCount > 10 ? fCount.toFixed(1) + '万' : fCount
+            let fCount = count / 10000;
+            return this.fCount > 10 ? fCount.toFixed(1) + "万" : fCount;
         }
     },
     watch: {

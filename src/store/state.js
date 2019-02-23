@@ -19,6 +19,7 @@ const state = {
   disc: 0,
   playing: false,
   fullScreen: false,
+  showDisc: false,
   playlist: loadPlaylist(),
   sequenceList: loadSequenceList(),
   mode: playMode.sequence,

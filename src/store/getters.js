@@ -29,3 +29,5 @@ export const favoriteSong = state => state.favoriteSong
 export const songHistory = state => state.songHistory
 
 export const discHistory = state => state.discHistory
+
+export const showDisc = state => state.showDisc

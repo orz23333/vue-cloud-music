@@ -5,7 +5,6 @@
             <scroll class="scroll-wrapper" :data="list">
                 <list-bar :list="list" @selectItem="selectDisc"></list-bar>
             </scroll>
-            <router-view></router-view>
         </div>
     </transition>
 </template>
@@ -39,13 +38,12 @@ export default {
             this.$router.back();
         },
         selectDisc(id) {
-            this.setDisc(id);
-            this.$router.push({ path: `/mymusic/favoriteDisc/${id}` });
+            this.changeDisc(id);
         },
         ...mapMutations({
             setDisc: "SET_DISC"
         }),
-        ...mapActions(["deleteFDOne"])
+        ...mapActions(["deleteFDOne", "changeDisc"])
     },
     components: {
         ListBar,

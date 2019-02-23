@@ -15,7 +15,6 @@
                     <list-bar :list="list" @selectItem="selectDisc"></list-bar>
                 </div>
             </scroll>
-            <router-view></router-view>
         </div>
     </transition>
 </template>
@@ -47,15 +46,15 @@ export default {
             this.$router.back();
         },
         toSongHistory() {
-          this.$router.push({path: '/mymusic/playHistory/songHistory'})
+            this.$router.push({ path: "/mymusic/playHistory/songHistory" });
         },
         selectDisc(id) {
-            this.setDisc(id);
-            this.$router.push({ path: `/mymusic/playHistory/disc` });
+            this.changeDisc(id);
         },
         ...mapMutations({
             setDisc: "SET_DISC"
         }),
+        ...mapActions(["changeDisc"])
     },
     components: {
         ListBar,

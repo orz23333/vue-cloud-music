@@ -22,7 +22,6 @@
                 </div>
             </div>
         </scroll>
-        <router-view></router-view>
     </div>
 </template>
 
@@ -54,8 +53,7 @@ export default {
             this.playMv(mv.id);
         },
         selectDisc(disc) {
-            this.setDisc(disc.id);
-            this.$router.push({ path: `/findmusic/music/${disc.id}` });
+            this.changeDisc(disc.id)
         },
         loadImage() {
             this.$refs.scroll.refresh();
@@ -86,14 +84,17 @@ export default {
                 return new Mv(v);
             });
         },
-        ...mapActions(["playMv"]),
+        ...mapActions(["playMv", 'changeDisc']),
         ...mapMutations({
-            setDisc: "SET_DISC"
+            setDisc: "SET_DISC",
+            setDiscShow: "SET_DISC_SHOW"
         })
     },
     computed: {
         recommendData() {
-            let data = this.discList.concat(this.mvList).concat(this.recommends);
+            let data = this.discList
+                .concat(this.mvList)
+                .concat(this.recommends);
             return data;
         },
         showMv() {

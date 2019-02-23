@@ -34,7 +34,6 @@
                 </div>
             </div>
         </scroll>
-        <router-view></router-view>
     </div>
 </template>
 
@@ -43,7 +42,7 @@ import Scroll from "base/scroll/scroll";
 import Loading from "base/loading/loading";
 import { getTopList } from "api/rank";
 import { RES_OK } from "api/config";
-import { mapMutations } from "vuex";
+import { mapMutations,mapActions } from "vuex";
 
 export default {
     created() {
@@ -57,8 +56,7 @@ export default {
     },
     methods: {
         selectItem(item) {
-            this.setDisc(item.id);
-            this.$router.push({ path: `/findmusic/hot/${item.id}` });
+            this.changeDisc(item.id)
         },
         _getTopList() {
             getTopList().then(res => {
@@ -82,7 +80,10 @@ export default {
         },
         ...mapMutations({
             setDisc: "SET_DISC"
-        })
+        }),
+        ...mapActions([
+          'changeDisc'
+        ])
     },
     watch: {
         cloudList() {

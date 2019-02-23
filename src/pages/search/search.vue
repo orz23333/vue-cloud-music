@@ -1,10 +1,16 @@
 <template>
     <div>
-        <c-header icon='icon-fangdajing' title="搜索"></c-header>
+        <c-header icon="icon-fangdajing" title="搜索"></c-header>
         <div class="search-input-wrapper">
-            <div class="search-input">
+            <div class="search-input" @click="focus">
                 <i class="icon-fangdajing"></i>
-                <input v-model="query" type="text" class="input" placeholder="搜索歌曲，歌手，mv">
+                <input
+                    v-model="query"
+                    type="text"
+                    class="input"
+                    placeholder="搜索歌曲，歌手，mv"
+                    ref="input"
+                >
                 <i class="icon-iconfontcha" v-show="query" @click="clearQuery"></i>
             </div>
         </div>
@@ -14,7 +20,7 @@
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
                         <ul>
-                            <li v-for="item of hotKey" class="item">
+                            <li v-for="item of hotKey" class="item" @click="selectHot(item.first)">
                                 <span>
                                     {{ item.first }}
                                     <sup v-if="item.iconType" class="sup">hot</sup>
@@ -44,7 +50,7 @@
             </scroll>
         </div>
         <div class="search-result" v-show="query" ref="searchResult">
-            <suggest  ref="suggest" :query="query"></suggest>
+            <suggest ref="suggest" :query="query"></suggest>
         </div>
     </div>
 </template>
@@ -52,7 +58,7 @@
 <script>
 import CHeader from "components/header/header";
 import Scroll from "base/scroll/scroll";
-import Suggest from 'components/suggest/suggest'
+import Suggest from "components/suggest/suggest";
 import { getHotKey } from "api/search";
 import { RES_OK } from "api/config";
 export default {
@@ -67,12 +73,18 @@ export default {
         clearQuery() {
             this.query = "";
         },
+        selectHot(query) {
+            this.query = query;
+        },
         _getHotKey() {
             getHotKey().then(res => {
                 if (res.code === RES_OK) {
                     this.hotKey = res.result.hots;
                 }
             });
+        },
+        focus() {
+            this.$refs.input.focus();
         }
     },
     created() {
@@ -90,7 +102,10 @@ export default {
 @import '~common/stylus/variable'
 
 .search-input-wrapper
-    margin 10px
+    position relative
+    z-index 2
+    background-color #fff
+    padding 10px
     .search-input
         display flex
         align-items center

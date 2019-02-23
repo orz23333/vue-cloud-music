@@ -39,11 +39,7 @@
                             <i class="icon-bofang"></i>
                             <span>播放全部(共{{ discDetail.songs.length }}首)</span>
                         </div>
-                        <song-list
-                            :songs="discDetail.songs"
-                            @selectMv="setPlayMv"
-                            @select="setPlayList"
-                        ></song-list>
+                        <song-list :songs="songs" @selectMv="setPlayMv" @select="setPlayList"></song-list>
                     </div>
                 </scroll>
             </div>
@@ -74,6 +70,7 @@ export default {
     data() {
         return {
             discDetail: {},
+            songs: [],
             isCommentShow: false
         };
     },
@@ -136,13 +133,16 @@ export default {
             this.playMv(id);
         },
         back() {
-            this.$router.back();
+            this.setDiscShow(false);
         },
         _getDiscList(id) {
             getDiscList(id).then(res => {
                 if (res.code === RES_OK) {
                     this.discDetail = this._normalize(res.playlist);
                     this.discDetail.id = this.disc;
+                    this.songs = JSON.parse(
+                        JSON.stringify(this.discDetail.songs)
+                    );
                     this._getUrl(this.discDetail.songs);
                 }
             });
@@ -179,6 +179,8 @@ export default {
                             }
                         });
                     });
+                    this.discDetail = Object.assign({}, this.discDetail);
+                    this.songs = this.discDetail.songs;
                 }
             });
         },
@@ -190,7 +192,8 @@ export default {
             "saveDiscHistory"
         ]),
         ...mapMutations({
-            setFullScreen: "SET_FULL_SCREEN"
+            setFullScreen: "SET_FULL_SCREEN",
+            setDiscShow: "SET_DISC_SHOW"
         })
     },
     components: {

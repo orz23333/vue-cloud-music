@@ -56,6 +56,10 @@ const mutations = {
   [types.SET_FAVORITE_SONG](state, list) {
     state.favoriteSong = list
   },
+
+  [types.SET_DISC_SHOW](state, flag) {
+    state.showDisc = flag
+  }
 }
 
 export default mutations

@@ -245,6 +245,11 @@ export default {
             if (newS.id === oldS.id || !newS.id) {
                 return;
             }
+            if (!newS.url) {
+                this.next();
+                this.songReady = true;
+                return;
+            }
             this.$nextTick(() => {
                 this.$refs.audio.play();
                 this.setPlayingState(true);

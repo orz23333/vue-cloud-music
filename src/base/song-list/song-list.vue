@@ -1,13 +1,19 @@
 <template>
     <div class="song-list">
         <ul>
-            <li @click="selectItem(song, index)" class="item" v-for="(song, index) in songs">
+            <li
+                @click="selectItem(song, index)"
+                class="item"
+                :class="disable(song)"
+                v-for="(song, index) in songs"
+                :key="song.id"
+            >
                 <div class="rank">
                     <span v-if="currentSong.id !== song.id">{{ index + 1}}</span>
                     <span class="icon-icon-test" v-else></span>
                 </div>
                 <div class="content">
-                    <h2 class="name"  :class="{'current' : currentSong.id === song.id}">
+                    <h2 class="name" :class="{'current' : currentSong.id === song.id}">
                         {{song.name}}
                         <span v-if="song.alia">({{song.alia}})</span>
                     </h2>
@@ -35,6 +41,9 @@ export default {
     computed: {
         ...mapGetters(["currentSong"])
     },
+    update() {
+        console.log(songs);
+    },
     methods: {
         selectItem(item, index) {
             this.$emit("select", item, index);
@@ -56,6 +65,9 @@ export default {
             if (index > 2) {
                 return index + 1;
             }
+        },
+        disable(song) {
+            return song.url ? "" : "disable";
         }
     },
     components: {
@@ -75,6 +87,10 @@ export default {
         box-sizing border-box
         height 64px
         font-size 14px
+        &.disable
+            opacity 0.5
+        &.disable:after
+            content '不可播放'
         .rank
             flex 0 0 25px
             width 25px
@@ -95,7 +111,7 @@ export default {
                 no-wrap()
                 color $color-text
                 &.current
-                    color red                
+                    color red
                 span
                     color #999
             .desc
