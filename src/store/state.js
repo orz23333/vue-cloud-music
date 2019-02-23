@@ -20,6 +20,7 @@ const state = {
   playing: false,
   fullScreen: false,
   showDisc: false,
+  query: '',
   playlist: loadPlaylist(),
   sequenceList: loadSequenceList(),
   mode: playMode.sequence,

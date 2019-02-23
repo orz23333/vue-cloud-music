@@ -91,6 +91,10 @@ export default {
             opacity 0.5
         &.disable:after
             content '不可播放'
+            display block
+            padding-right 9px
+            font-size 12px
+            opacity 0.5
         .rank
             flex 0 0 25px
             width 25px

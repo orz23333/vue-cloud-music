@@ -121,6 +121,9 @@ export default {
             this.saveDiscHistory(this.discDetail);
         },
         setPlayList(item, index) {
+            if (!item.url) {
+                return;
+            }
             this.selectPlay({ list: this.discDetail.songs, index });
             this.saveDiscHistory(this.discDetail);
         },

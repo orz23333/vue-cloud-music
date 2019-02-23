@@ -31,3 +31,5 @@ export const songHistory = state => state.songHistory
 export const discHistory = state => state.discHistory
 
 export const showDisc = state => state.showDisc
+
+export const query = state => state.query

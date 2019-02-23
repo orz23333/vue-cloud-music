@@ -59,6 +59,10 @@ const mutations = {
 
   [types.SET_DISC_SHOW](state, flag) {
     state.showDisc = flag
+  },
+
+  [types.SET_QUERY](state, query) {
+    state.query = query
   }
 }
 

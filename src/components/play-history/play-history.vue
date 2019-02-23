@@ -15,6 +15,7 @@
                     <list-bar :list="list" @selectItem="selectDisc"></list-bar>
                 </div>
             </scroll>
+            <router-view></router-view>
         </div>
     </transition>
 </template>

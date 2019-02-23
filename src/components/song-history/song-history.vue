@@ -36,6 +36,8 @@ export default {
     },
     created() {
         this._getUrl();
+        console.log(2);
+        
     },
     methods: {
         back() {

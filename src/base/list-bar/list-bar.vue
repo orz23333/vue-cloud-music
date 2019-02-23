@@ -9,7 +9,10 @@
                     <i :class="icon"></i>
                     {{item.name}}
                 </h2>
-                <p class="desc">{{item.desc}}</p>
+                <p class="desc">
+                    <span class="text">{{item.desc}}</span>
+                    <span class="count">{{item.count}}</span>
+                </p>
             </div>
         </div>
     </div>
@@ -36,6 +39,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import '~common/stylus/mixin'
 .item
     display flex
     align-items center
@@ -43,7 +47,7 @@ export default {
     padding 10px 10px 0
     font-size 14px
     &:last-child
-      padding 10px
+        padding 10px
     .rank
         flex 0
         text-align center
@@ -51,6 +55,7 @@ export default {
         font-size 18px
         img
             height 64px
+            width 64px
     .content
         flex 3
         line-height 20px
@@ -62,18 +67,21 @@ export default {
         .name
             no-wrap()
             color $color-text
-            &.current
-                color red
-            span
-                color #999
             i
                 font-size 20px
         .desc
             no-wrap()
             margin-top 4px
             color #999
-            width 70%
             font-size 12px
+            display flex
+            justify-content flex-end
+            flex-wrap nowrap
+            width 100%
+            .text
+                flex 1
+            .count
+                padding-left 2px
     .mv
         font-size 20px
         padding 14.5px 0

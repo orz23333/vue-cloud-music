@@ -155,26 +155,22 @@ export default new Router({
     {
       path: '/search',
       component: Search,
-      // redirect: '/search/song/0',
+      // redirect: '/search/song',
       children: [{
-          path: 'song/:query',
+          path: 'song',
           component: SearchSong,
-          props: true
         },
         {
-          path: 'singer/:query',
+          path: 'singer',
           component: SearchSinger,
-          props: true
         },
         {
-          path: 'disc/:query',
+          path: 'disc',
           component: SearchDisc,
-          props: true
         },
         {
-          path: 'mv/:query',
+          path: 'mv',
           component: SearchMv,
-          props: true
         }
       ]
     }

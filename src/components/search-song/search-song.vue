@@ -6,15 +6,15 @@
             ref="suggest"
             :pullup="pullup"
             :beforeScroll="beforeScroll"
-            @scrollToEnd="searchMore"
+            @scrollToEnd="_searchMoreSong"
         >
             <div>
-                <ul class="suggest-list" v-if="type === types[0]">
+                <ul class="suggest-list" v-if="result.length">
                     <li
                         class="suggest-item"
                         v-for="item in result"
                         @click="select(item)"
-                        :key="item.id"
+                        :class="disable(item)"
                     >
                         <div class="name">
                             <p class="text">{{item.name}}</p>
@@ -27,20 +27,7 @@
                     </li>
                     <loading v-show="hasMore" title></loading>
                 </ul>
-                <ul class="suggest-list" v-if="type === types[2]">
-                    <li
-                        class="suggest-item"
-                        v-for="item in result"
-                        @click="select(item)"
-                        :key="item.id"
-                    >
-                        <list-bar :list="result"></list-bar>
-                    </li>
-                    <loading v-show="hasMore" title></loading>
-                </ul>
-                <div v-show="!hasMore && !result.length" class="no-result-wrapper">
-                    <no-result title="抱歉，暂无搜索结果"></no-result>
-                </div>
+                <div v-show="!hasMore && !result.length" class="no-result-wrapper">抱歉，暂无搜索结果</div>
             </div>
         </scroll>
     </div>
@@ -52,56 +39,67 @@ import Loading from "base/loading/loading";
 import NoResult from "base/no-result/no-result";
 import { search } from "api/search";
 import { RES_OK } from "api/config";
-import Singer from "common/js/singer";
-import ListBar from "base/list-bar/list-bar";
+import { debounce } from "common/js/util";
+import { mapGetters, mapMutations, mapActions } from "vuex";
+import { getUrl } from "api/song";
 
 const TYPE_SINGER = "singer";
 const perpage = 20;
 
 export default {
-    props: {
-        showSinger: {
-            type: Boolean,
-            default: true
-        },
-        query: {
-            type: String,
-            default: ""
-        }
-    },
     data() {
         return {
-            page: 0,
             type: 1,
+            page: 0,
             pullup: true,
             beforeScroll: true,
             hasMore: true,
-            result: [],
-            activeIndex: 0,
-            search: this._searchSong.bind(this),
-            searchMore: this._searchMoreSong.bind(this)
+            result: []
         };
     },
+    computed: {
+        ...mapGetters(["query"])
+    },
     created() {
-        this.tab = ["单曲", "歌手", "歌单", "Mv"];
-        this.types = [1, 100, 1000, 1004];
+        if (!this.query) {
+            return;
+        }
+        this._searchSong(this.query);
+        this.$watch(
+            "query",
+            debounce(newQuery => {
+                if (!newQuery) {
+                    return;
+                }
+                this._searchSong(newQuery);
+            }, 400)
+        );
     },
     methods: {
         select(item) {
-            this.$emit("select", { type: item.type, item });
+            if (!item.url) {
+                return;
+            }
+            this.insertSong(item);
         },
-        selectMv(mv) {
-            this.$emit("select", { type: "mv", item: mv });
+        selectMv(item) {
+            this.playMv(item.mvId);
         },
         _searchSong() {
             this.page = 0;
-            this.type = 1;
             this.hasMore = true;
-            this.$refs.suggest.scrollTo(0, 0);
+            this.result = [];
+            this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
+                    if (!typeof res.result.songs) {
+                        this.result = [];
+                        this.hasMore = false;
+                        return;
+                    }
                     this.result = this._normalizeSong(res.result.songs);
                     this.hasMore = this._checkMore(res.result.songCount);
+                    this._getUrl(this.result);
                 }
             });
         },
@@ -112,31 +110,17 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
+                    if (!typeof res.result.songs) {
+                        this.hasMore = false;
+                        return;
+                    }
                     this.result = this.result.concat(
                         this._normalizeSong(res.result.songs)
                     );
                     this.hasMore = this._checkMore(res.result.songCount);
+                    this._getUrl(this.result);
                 }
             });
-        },
-        _searchDisc() {
-            this.page = 0;
-            this.type = 1000;
-            this.hasMore = true;
-            this.$refs.suggest.scrollTo(0, 0);
-            search(this.query, this.type, this.page).then(res => {
-                if (res.code === RES_OK) {
-                    this.result = this._normalizeDisc(res.result.playLists);
-                    this.hasMore =
-                        this.result.length < res.result.playlistCount
-                            ? true
-                            : false;
-                }
-            });
-        },
-        changeMode(index) {
-            this.activeIndex = index;
-            this.type = this.types[index];
         },
         _checkMore(count) {
             return this.result.length < count;
@@ -157,6 +141,7 @@ export default {
             s.singer = this.filterSinger(song.artists);
             s.album = song.album.name;
             s.mvId = song.mvid;
+            s.duration = song.duration;
             return s;
         },
         filterSinger(singer) {
@@ -177,37 +162,36 @@ export default {
             }
             return str;
         },
-        _normalizeDisc(list) {
-            let ret = [];
-            list.forEach(disc => {
-                let obj = {};
-                obj.id = disc.id;
-                obj.image = disc.coverImgUrl;
-                obj.name = disc.name;
-                obj.desc = `${disc.trackCount}首音乐 播放${this._filterCount(
-                    disc.playCount
-                )}次 by ${disc.creator.nickname}`;
+        _getUrl(list) {
+            const ids = [];
+            list.forEach(song => {
+                ids.push(song.id);
             });
-            return ret;
+            const id = ids.join(",");
+            getUrl(id).then(res => {
+                if (res.code === RES_OK) {
+                    let data = res.data;
+                    let copy = JSON.parse(JSON.stringify(this.result));
+                    copy.forEach(song => {
+                        data.forEach(v => {
+                            if (v.id === song.id) {
+                                song.url = v.url;
+                            }
+                        });
+                    });
+                    this.result = copy;
+                }
+            });
         },
-        _filterCount(count) {
-            let fCount = count / 10000;
-            return this.fCount > 10 ? fCount.toFixed(1) + "万" : fCount;
-        }
-    },
-    watch: {
-        query(newQ) {
-            if (!newQ) {
-                return;
-            }
-            this.search(newQ);
-        }
+        disable(song) {
+            return song.url ? "" : "disable";
+        },
+        ...mapActions(["insertSong", "playMv"])
     },
     components: {
         Scroll,
         Loading,
-        NoResult,
-        ListBar
+        NoResult
     }
 };
 </script>
@@ -246,6 +230,14 @@ export default {
                 align-items center
                 padding 5px 10px
                 border-bottom 1px solid rgb(240, 240, 240)
+                &.disable
+                    opacity 0.5
+                &.disable:after
+                    content '不可播放'
+                    display block
+                    padding-right 9px
+                    font-size 12px
+                    opacity 0.5
                 .name
                     flex 1
                     font-size $font-size-medium
@@ -265,8 +257,9 @@ export default {
                 .mv
                     font-size 25px
     .no-result-wrapper
-        position absolute
+        padding-top 100px
         width 100%
-        top 50%
-        transform translateY(-50%)
+        text-align center
+        font-size 30px
+        color #999
 </style>

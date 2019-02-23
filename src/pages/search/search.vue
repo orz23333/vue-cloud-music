@@ -5,7 +5,8 @@
             <div class="search-input" @click="focus">
                 <i class="icon-fangdajing"></i>
                 <input
-                    v-model="query"
+                    :value="query"
+                    @input="changeQuery"
                     type="text"
                     class="input"
                     placeholder="搜索歌曲，歌手，mv"
@@ -50,7 +51,18 @@
             </scroll>
         </div>
         <div class="search-result" v-show="query" ref="searchResult">
-            <suggest ref="suggest" :query="query"></suggest>
+            <div class="suggest">
+                <ul class="tab">
+                    <router-link
+                        tag="li"
+                        :to="`/search/${routers[index]}`"
+                        v-for="(item,index) of tab"
+                        class="item"
+                        :key="index"
+                    >{{item}}</router-link>
+                </ul>
+                <router-view></router-view>
+            </div>
         </div>
     </div>
 </template>
@@ -58,23 +70,36 @@
 <script>
 import CHeader from "components/header/header";
 import Scroll from "base/scroll/scroll";
-import Suggest from "components/suggest/suggest";
 import { getHotKey } from "api/search";
 import { RES_OK } from "api/config";
+import { mapGetters, mapMutations } from "vuex";
 export default {
     data() {
         return {
-            query: "",
+            input: "",
             hotKey: [],
-            searches: []
+            searches: [],
+            tab: ["单曲", "歌手", "歌单", "Mv"],
+            types: [1, 100, 1000, 1004],
+            routers: ["song", "singer", "disc", "mv"]
         };
     },
+    computed: {
+        ...mapGetters(["query"])
+    },
     methods: {
+        changeQuery(e) {
+            this.setQuery(e.target.value);
+            console.log(2);
+            
+        },
         clearQuery() {
-            this.query = "";
+            this.setQuery("");
+            this.$router.push({ path: "/search" });
         },
         selectHot(query) {
-            this.query = query;
+            this.setQuery(query);
+            this.$router.push({ path: "/search/song" });
         },
         _getHotKey() {
             getHotKey().then(res => {
@@ -85,15 +110,28 @@ export default {
         },
         focus() {
             this.$refs.input.focus();
-        }
+        },
+        ...mapMutations({
+            setQuery: "SET_QUERY"
+        })
     },
     created() {
         this._getHotKey();
     },
+    watch: {
+        // input(newinput) {
+        //     this.setQuery(newinput);
+        //     if (newinput === "") {
+        //         this.$router.push({ path: "/search" });
+        //     }
+        // },
+        // query(newq) {
+        //     this.input = newq;
+        // }
+    },
     components: {
         CHeader,
-        Scroll,
-        Suggest
+        Scroll
     }
 };
 </script>
@@ -190,5 +228,59 @@ export default {
                         .icon-delete
                             font-size $font-size-small
                             color $color-text-d
+.search-result
+    .suggest
+        height 100%
+        overflow hidden
+        .tab
+            position relative
+            z-index 1
+            background-color #fff
+            display flex
+            height 30px
+            line-height 30px
+            font-size 16px
+            border-bottom 1px solid rgb(240, 240, 240)
+            .item
+                flex 1
+                text-align center
+                &.router-link-active
+                    color red
+        .scroll-wrapper
+            position fixed
+            top 131px
+            bottom 44px
+            left 0
+            right 0
+            .suggest-list
+                height 100%
+                .suggest-item
+                    display flex
+                    align-items center
+                    padding 5px 10px
+                    border-bottom 1px solid rgb(240, 240, 240)
+                    .name
+                        flex 1
+                        font-size $font-size-medium
+                        color black
+                        overflow hidden
+                        .text
+                            font-size 15px
+                            no-wrap()
+                        .center
+                            color #999
+                            padding 5px 0
+                            font-size 12px
+                            no-wrap()
+                            width 60%
+                        .bottom
+                            color #999999
+                    .mv
+                        font-size 25px
+        .no-result-wrapper
+            position absolute
+            width 100%
+            top 50%
+            transform translateY(-50%)
 </style>
 
