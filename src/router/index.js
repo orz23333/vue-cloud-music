@@ -156,23 +156,23 @@ export default new Router({
       path: '/search',
       component: Search,
       // redirect: '/search/song',
-      children: [{
-          path: 'song',
-          component: SearchSong,
-        },
-        {
-          path: 'singer',
-          component: SearchSinger,
-        },
-        {
-          path: 'disc',
-          component: SearchDisc,
-        },
-        {
-          path: 'mv',
-          component: SearchMv,
-        }
-      ]
+      // children: [{
+      //     path: 'song',
+      //     component: SearchSong,
+      //   },
+      //   {
+      //     path: 'singer',
+      //     component: SearchSinger,
+      //   },
+      //   {
+      //     path: 'disc',
+      //     component: SearchDisc,
+      //   },
+      //   {
+      //     path: 'mv',
+      //     component: SearchMv,
+      //   }
+      // ]
     }
   ]
 })

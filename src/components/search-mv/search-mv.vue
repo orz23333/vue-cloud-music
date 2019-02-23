@@ -9,7 +9,7 @@
             @scrollToEnd="_searchMoreMv"
         >
             <div>
-                <list-bar :list="result" @selectItem="selectMv"></list-bar>
+                <list-bar :list="result" @selectItem="selectMv" icon="icon-MV"></list-bar>
                 <loading v-show="hasMore" title></loading>
                 <div v-show="!hasMore && !result.length" class="no-result-wrapper">抱歉，暂无搜索结果</div>
             </div>
@@ -28,6 +28,12 @@ import { mapGetters, mapMutations, mapActions } from "vuex";
 import moment from "moment";
 
 export default {
+    props: {
+        query: {
+            type: String,
+            default: ""
+        }
+    },  
     data() {
         return {
             type: 1004,
@@ -35,35 +41,31 @@ export default {
             pullup: true,
             beforeScroll: true,
             hasMore: true,
-            result: []
+            result: [],
+            lastQuery: ""
         };
     },
-    computed: {
-        ...mapGetters(["query"])
-    },
-    created() {
+    activated() {
+        if (!this.query || this.query === this.lastQuery) {
+            return;
+        }
         this._searchMv(this.query);
-        this.$watch(
-            "query",
-            debounce(newQuery => {
-                if (!newQuery) {
-                    return;
-                }
-                this._searchMv(newQuery);
-            }, 400)
-        );
     },
     methods: {
         selectMv(id) {
             this.playMv(id);
         },
-        _searchMv() {
+        getSearch(query) {
+          this._searchMv(query)
+        },
+        _searchMv(query) {
             this.page = 0;
             this.hasMore = true;
+            this.lastQuery = query 
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
-            search(this.query, this.type, this.page).then(res => {
+            search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.mvs) {
+                    if (typeof res.result.mvs === 'undefined') {
                         this.hasMore = false;
                         return;
                     }
@@ -79,7 +81,7 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.mvs) {
+                    if (typeof res.result.mvs === 'undefined') {
                         this.hasMore = false;
                         return;
                     }

@@ -5,15 +5,16 @@
             <div class="search-input" @click="focus">
                 <i class="icon-fangdajing"></i>
                 <input
-                    :value="query"
-                    @input="changeQuery"
+                    v-model="query"
                     type="text"
                     class="input"
                     placeholder="搜索歌曲，歌手，mv"
                     ref="input"
+                    @keydown.enter="getSearch"
                 >
                 <i class="icon-iconfontcha" v-show="query" @click="clearQuery"></i>
             </div>
+            <div v-if="query" class="search" @click="getSearch">搜索</div>
         </div>
         <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
             <scroll class="shortcut">
@@ -53,15 +54,20 @@
         <div class="search-result" v-show="query" ref="searchResult">
             <div class="suggest">
                 <ul class="tab">
-                    <router-link
-                        tag="li"
-                        :to="`/search/${routers[index]}`"
+                    <li
                         v-for="(item,index) of tab"
                         class="item"
+                        :class="active(index)"
                         :key="index"
-                    >{{item}}</router-link>
+                        @click="changeMode(index)"
+                    >{{item}}</li>
                 </ul>
-                <router-view></router-view>
+                <div class="filter" v-show="filterShow">
+                    <div class="inner"></div>
+                </div>
+                <keep-alive>
+                    <component :is="currentSearch" :query="query" ref="search"></component>
+                </keep-alive>
             </div>
         </div>
     </div>
@@ -73,33 +79,44 @@ import Scroll from "base/scroll/scroll";
 import { getHotKey } from "api/search";
 import { RES_OK } from "api/config";
 import { mapGetters, mapMutations } from "vuex";
+import SearchSong from "components/search-song/search-song";
+import SearchSinger from "components/search-singer/search-singer";
+import SearchDisc from "components/search-disc/search-disc";
+import SearchMv from "components/search-mv/search-mv";
+
 export default {
     data() {
         return {
-            input: "",
+            query: "",
+            activeIndex: 0,
+            filterShow: true,
             hotKey: [],
             searches: [],
             tab: ["单曲", "歌手", "歌单", "Mv"],
-            types: [1, 100, 1000, 1004],
-            routers: ["song", "singer", "disc", "mv"]
+            searchTab: ["song", "singer", "disc", "mv"]
         };
     },
     computed: {
-        ...mapGetters(["query"])
+        currentSearch() {
+            let tab = `search-${this.searchTab[this.activeIndex]}`;
+            return tab;
+        }
     },
     methods: {
-        changeQuery(e) {
-            this.setQuery(e.target.value);
-            console.log(2);
-            
+        getSearch() {
+            this.$refs.search.getSearch(this.query);
+            this.filterShow = false
+        },
+        changeMode(index) {
+            this.activeIndex = index;
         },
         clearQuery() {
-            this.setQuery("");
-            this.$router.push({ path: "/search" });
+            this.query = "";
         },
         selectHot(query) {
-            this.setQuery(query);
-            this.$router.push({ path: "/search/song" });
+            this.query = query;
+            this.$refs.search.getSearch(query);
+            this.filterShow = false
         },
         _getHotKey() {
             getHotKey().then(res => {
@@ -111,27 +128,27 @@ export default {
         focus() {
             this.$refs.input.focus();
         },
-        ...mapMutations({
-            setQuery: "SET_QUERY"
-        })
+        active(index) {
+            return this.activeIndex == index ? "active" : "";
+        }
     },
     created() {
         this._getHotKey();
     },
     watch: {
-        // input(newinput) {
-        //     this.setQuery(newinput);
-        //     if (newinput === "") {
-        //         this.$router.push({ path: "/search" });
-        //     }
-        // },
-        // query(newq) {
-        //     this.input = newq;
-        // }
+        query(newQuery) {
+          if (!newQuery) {
+            this.filterShow = true
+          }
+        }
     },
     components: {
         CHeader,
-        Scroll
+        Scroll,
+        SearchSong,
+        SearchSinger,
+        SearchDisc,
+        SearchMv
     }
 };
 </script>
@@ -144,15 +161,22 @@ export default {
     z-index 2
     background-color #fff
     padding 10px
+    display flex
+    flex-direct row
+    align-items center
+    .search
+        padding-left 10px
+        font-size 16px
     .search-input
         display flex
         align-items center
         box-sizing border-box
-        width 100%
+        flex 1
         padding 0 6px
         height 35px
         background-color rgb(230, 230, 230)
         border-radius 20px
+        transition all 1s
         .icon-fangdajing
             font-size 24px
             color $color-background
@@ -244,8 +268,20 @@ export default {
             .item
                 flex 1
                 text-align center
-                &.router-link-active
+                &.active
                     color red
+        .filter
+            position fixed
+            z-index 2
+            top 99px
+            bottom 44px
+            left 0
+            right 0
+            background #ffffff
+            z-index 2  /*不设置该属性，则本cssText的最后一个属性会无效*/
+                .inner
+                    height 100%
+                    background-color #fff
         .scroll-wrapper
             position fixed
             top 131px

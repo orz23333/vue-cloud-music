@@ -27,6 +27,12 @@ import { debounce } from "common/js/util";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
+    props: {
+        query: {
+            type: String,
+            default: ""
+        }
+    },    
     data() {
         return {
             type: 1000,
@@ -37,32 +43,27 @@ export default {
             result: []
         };
     },
-    computed: {
-        ...mapGetters(["query"])
-    },
-    created() {
+    activated() {
+        if (!this.query || this.query === this.lastQuery) {
+            return;
+        }
         this._searchDisc(this.query);
-        this.$watch(
-            "query",
-            debounce(newQuery => {
-                if (!newQuery) {
-                    return;
-                }
-                this._searchDisc(newQuery);
-            }, 400)
-        );
     },
     methods: {
         selectDisc(id) {
             this.changeDisc(id);
         },
-        _searchDisc() {
+        getSearch(query) {
+          this._searchDisc(query)
+        },        
+        _searchDisc(query) {
             this.page = 0;
             this.hasMore = true;
+            this.lastQuery = query  
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
-            search(this.query, this.type, this.page).then(res => {
+            search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.playlists) {
+                    if (typeof res.result.playlists === 'undefined') {
                         this.hasMore = false;
                         return;
                     }                  
@@ -78,7 +79,7 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.playlists) {
+                    if (typeof res.result.playlists === 'undefined') {
                         this.hasMore = false;
                         return;
                     }

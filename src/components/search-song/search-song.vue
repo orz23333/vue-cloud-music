@@ -47,6 +47,12 @@ const TYPE_SINGER = "singer";
 const perpage = 20;
 
 export default {
+    props: {
+        query: {
+            type: String,
+            default: ""
+        }
+    },
     data() {
         return {
             type: 1,
@@ -54,26 +60,15 @@ export default {
             pullup: true,
             beforeScroll: true,
             hasMore: true,
-            result: []
+            result: [],
+            lastQuery: ""
         };
     },
-    computed: {
-        ...mapGetters(["query"])
-    },
-    created() {
-        if (!this.query) {
+    activated() {
+        if (!this.query || this.query === this.lastQuery) {
             return;
         }
         this._searchSong(this.query);
-        this.$watch(
-            "query",
-            debounce(newQuery => {
-                if (!newQuery) {
-                    return;
-                }
-                this._searchSong(newQuery);
-            }, 400)
-        );
     },
     methods: {
         select(item) {
@@ -85,14 +80,18 @@ export default {
         selectMv(item) {
             this.playMv(item.mvId);
         },
-        _searchSong() {
+        getSearch(query) {
+            this._searchSong(query);
+        },
+        _searchSong(query) {
             this.page = 0;
             this.hasMore = true;
             this.result = [];
+            this.lastQuery = query
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
-            search(this.query, this.type, this.page).then(res => {
+            search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.songs) {
+                    if (typeof res.result.songs === 'undefined') {
                         this.result = [];
                         this.hasMore = false;
                         return;
@@ -110,8 +109,10 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (!typeof res.result.songs) {
+                    if (typeof res.result.songs === 'undefined') {
                         this.hasMore = false;
+                        console.log(typeof res.result.songs);
+                        
                         return;
                     }
                     this.result = this.result.concat(
