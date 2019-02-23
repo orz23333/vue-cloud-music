@@ -5,7 +5,7 @@
                 <div class="findmusic-content">
                     <div v-if="recommends.length" class="slider-wrapper">
                         <slider>
-                            <div v-for="item of recommends">
+                            <div v-for="item of recommends" :key="item.linkUrl">
                                 <a :href="item.linkUrl" class="needsclick">
                                     <img :src="item.picUrl" @load="loadImage" class="needsclick">
                                 </a>

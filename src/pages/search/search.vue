@@ -22,7 +22,7 @@
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
                         <ul>
-                            <li v-for="item of hotKey" class="item" @click="selectHot(item.first)">
+                            <li v-for="item of hotKey" class="item" @click="selectHot(item.first)" :key="item.first">
                                 <span>
                                     {{ item.first }}
                                     <sup v-if="item.iconType" class="sup">hot</sup>

@@ -1,6 +1,11 @@
 <template>
     <div>
-        <div class="item" v-for="(item, index) in list" @click="selectItem(item.id)">
+        <div
+            class="item"
+            v-for="(item) in list"
+            @click="selectItem(item.id)"
+            :key="item.image+item.name"
+        >
             <div class="rank">
                 <img v-lazy="item.image" alt>
             </div>
@@ -41,6 +46,7 @@ export default {
 <style lang="stylus" scoped>
 @import '~common/stylus/mixin'
 @import '~common/stylus/variable'
+
 .item
     display flex
     align-items center

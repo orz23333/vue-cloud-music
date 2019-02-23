@@ -3,7 +3,7 @@
         <scroll :data="mvList" class="mv-wrapper" :pullup="pullup" @scrollToEnd="getMoreMv">
             <div>
                 <ul class="disc-wrapper">
-                    <li class="item" v-for="(item, index) of mvList" @click="selectMv(item.id)">
+                    <li class="item" v-for="(item, index) of mvList" @click="selectMv(item.id)" :key="item.id">
                         <div class="item-link">
                             <div class="item-content">
                                 <img :src="item.cover" class="item-video">
