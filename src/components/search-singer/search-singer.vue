@@ -9,7 +9,7 @@
             @scrollToEnd="_searchMoreSinger"
         >
             <div>
-                <div class="item" v-for="item of result">
+                <div class="item" v-for="item of result" :key="item.id">
                     <img v-lazy="item.image" alt>
                     <p class="text">
                         {{item.name}}

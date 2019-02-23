@@ -15,6 +15,7 @@
                         v-for="item in result"
                         @click="select(item)"
                         :class="disable(item)"
+                        :key="item.id+item.desc+''"
                     >
                         <div class="name">
                             <p class="text">{{item.name}}</p>
@@ -41,9 +42,6 @@ import { search } from "api/search";
 import { RES_OK } from "api/config";
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import { getUrl } from "api/song";
-
-const TYPE_SINGER = "singer";
-const perpage = 20;
 
 export default {
     props: {
@@ -86,11 +84,11 @@ export default {
             this.page = 0;
             this.hasMore = true;
             this.result = [];
-            this.lastQuery = query
+            this.lastQuery = query;
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
             search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.songs === 'undefined') {
+                    if (typeof res.result.songs === "undefined") {
                         this.result = [];
                         this.hasMore = false;
                         return;
@@ -108,10 +106,10 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.songs === 'undefined') {
+                    if (typeof res.result.songs === "undefined") {
                         this.hasMore = false;
                         console.log(typeof res.result.songs);
-                        
+
                         return;
                     }
                     this.result = this.result.concat(
@@ -190,8 +188,7 @@ export default {
     },
     components: {
         Scroll,
-        Loading,
-        NoResult
+        Loading
     }
 };
 </script>
