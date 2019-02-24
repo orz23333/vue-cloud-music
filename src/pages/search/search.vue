@@ -351,6 +351,7 @@ export default {
                             width 60%
                         .bottom
                             font-size 12px
+                            color #999999
                     .mv
                         font-size 25px
         .no-result-wrapper
