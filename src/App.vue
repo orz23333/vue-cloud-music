@@ -30,7 +30,6 @@ export default {
     methods: {
         _getUrl() {
             const ids = [];
-            console.log(this.playlist)
             this.playlist.forEach(song => {
                 ids.push(song.id);
             });
