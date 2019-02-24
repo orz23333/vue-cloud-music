@@ -32,7 +32,7 @@ export default {
             type: String,
             default: ""
         }
-    },  
+    },
     data() {
         return {
             type: 1004,
@@ -49,7 +49,7 @@ export default {
             return;
         }
         this.result = [];
-        this.hasMore = true;        
+        this.hasMore = true;
         this.getSearch(this.query);
     },
     methods: {
@@ -57,16 +57,16 @@ export default {
             this.playMv(id);
         },
         getSearch(query) {
-          this._searchMv(query)
+            this._searchMv(query);
         },
         _searchMv(query) {
             this.page = 0;
             this.hasMore = true;
-            this.lastQuery = query 
+            this.lastQuery = query;
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
             search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.mvs === 'undefined') {
+                    if (typeof res.result.mvs === "undefined") {
                         this.hasMore = false;
                         return;
                     }
@@ -82,7 +82,7 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.mvs === 'undefined') {
+                    if (typeof res.result.mvs === "undefined") {
                         this.hasMore = false;
                         return;
                     }
@@ -111,7 +111,7 @@ export default {
                 obj.image = mv.cover;
                 obj.name = mv.name;
                 obj.desc = `${this._formalTime(mv.duration)}, by ${
-                    mv.artists.name
+                    mv.artistName
                 }`;
                 obj.count = this._filterCount(mv.playCount);
                 ret.push(obj);

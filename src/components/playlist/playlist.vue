@@ -23,7 +23,7 @@
                         <li
                             :key="item.id"
                             class="item"
-                            v-for="(item,index) in sequenceList"
+                            v-for="(item,index) in playlist"
                             @click="selectItem(item,index)"
                             :class="isCurSongLi(item)"
                         >
