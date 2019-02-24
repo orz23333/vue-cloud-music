@@ -12,10 +12,10 @@
                 <ul class="suggest-list" v-if="result.length">
                     <li
                         class="suggest-item"
-                        v-for="item in result"
+                        v-for="(item,index) in result"
                         @click="select(item)"
                         :class="disable(item)"
-                        :key="item.id+item.desc+''"
+                        :key="index + item.name + item.id"
                     >
                         <div class="name">
                             <p class="text">{{item.name}}</p>
@@ -64,6 +64,8 @@ export default {
     activated() {
         if (!this.query || this.query === this.lastQuery) {
             return;
+        this.result = [];
+        this.hasMore = true;
         }
         this.getSearch(this.query);
     },

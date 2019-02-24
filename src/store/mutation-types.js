@@ -29,3 +29,5 @@ export const SET_FAVORITE_SONG = 'SET_FAVORITE_SONG'
 export const SET_DISC_SHOW = "SET_DISC_SHOW"
 
 export const SET_QUERY = 'SET_QUERY'
+
+export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY'

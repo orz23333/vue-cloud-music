@@ -4,7 +4,7 @@
             class="item"
             v-for="(item) in list"
             @click="selectItem(item.id)"
-            :key="item.image+item.name"
+            :key="item.image+item.name+item.id"
         >
             <div class="rank">
                 <img v-lazy="item.image" alt>

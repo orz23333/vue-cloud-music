@@ -8,6 +8,7 @@ import {
   loadPlayDisc,
   loadSequenceList,
   loadCurrentIndex,
+  loadSearch,
   loadFavorite,
   loadFavoriteMv,
   loadFavoriteDisc
@@ -27,6 +28,7 @@ const state = {
   currentIndex: loadCurrentIndex(),
   songHistory: loadPlay(),
   discHistory: loadPlayDisc(),
+  searchHistory: loadSearch(),
   favoriteSong: loadFavorite(),
   favoriteMv: loadFavoriteMv(),
   favoriteDisc: loadFavoriteDisc()

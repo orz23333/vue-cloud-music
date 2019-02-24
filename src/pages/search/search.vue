@@ -17,12 +17,17 @@
             <div v-if="query" class="search" @click="getSearch">搜索</div>
         </div>
         <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-            <scroll class="shortcut">
+            <scroll class="shortcut" ref="shortcut" :data="scrollData">
                 <div>
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
                         <ul>
-                            <li v-for="item of hotKey" class="item" @click="selectHot(item.first)" :key="item.first">
+                            <li
+                                v-for="item of hotKey"
+                                class="item"
+                                @click="selectHot(item.first)"
+                                :key="item.first"
+                            >
                                 <span>
                                     {{ item.first }}
                                     <sup v-if="item.iconType" class="sup">hot</sup>
@@ -33,16 +38,19 @@
                     <div class="search-history">
                         <h1 class="title">
                             <span class="text">搜索历史</span>
-                            <span class="clear">
+                            <span class="clear" @click="clearAll">
                                 <i class="icon-lajitong"></i>
                             </span>
                         </h1>
-                        <div class="search-list" v-show="searches.length">
+                        <div class="search-list" v-show="searchHistory.length">
                             <transition-group name="list" tag="ul">
-                                <li :key="item" class="search-item" v-for="item in searches">
+                                <li :key="item" class="search-item" v-for="item in searchHistory" @click="selectHot(item)">
+                                    <span class="history">
+                                        <i class="icon-shizhong"></i>
+                                    </span>
                                     <span class="text">{{item}}</span>
                                     <span class="icon" @click.stop="deleteOne(item)">
-                                        <i class="icon-delete"></i>
+                                        <i class="icon-iconfontcha"></i>
                                     </span>
                                 </li>
                             </transition-group>
@@ -70,15 +78,17 @@
                 </keep-alive>
             </div>
         </div>
+        <confirm confirmBtnText="清空" text="清空搜索历史？" @confirm="clearSearhHistory" ref="confirm"></confirm>
     </div>
 </template>
 
 <script>
 import CHeader from "components/header/header";
 import Scroll from "base/scroll/scroll";
+import Confirm from "base/confirm/confirm";
 import { getHotKey } from "api/search";
 import { RES_OK } from "api/config";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapMutations, mapActions } from "vuex";
 import SearchSong from "components/search-song/search-song";
 import SearchSinger from "components/search-singer/search-singer";
 import SearchDisc from "components/search-disc/search-disc";
@@ -100,12 +110,17 @@ export default {
         currentSearch() {
             let tab = `search-${this.searchTab[this.activeIndex]}`;
             return tab;
-        }
+        },
+        scrollData() {
+            return this.searchHistory.concat(this.hotKey);
+        },
+        ...mapGetters(["searchHistory"])
     },
     methods: {
         getSearch() {
             this.$refs.search.getSearch(this.query);
-            this.filterShow = false
+            this.filterShow = false;
+            this.saveSearhHistory(this.query);
         },
         changeMode(index) {
             this.activeIndex = index;
@@ -116,7 +131,14 @@ export default {
         selectHot(query) {
             this.query = query;
             this.$refs.search.getSearch(query);
-            this.filterShow = false
+            this.filterShow = false;
+            this.saveSearhHistory(query);
+        },
+        deleteOne(item) {
+            this.deleteSearhHistory(item);
+        },
+        clearAll() {
+            this.$refs.confirm.show();
         },
         _getHotKey() {
             getHotKey().then(res => {
@@ -130,16 +152,24 @@ export default {
         },
         active(index) {
             return this.activeIndex == index ? "active" : "";
-        }
+        },
+        ...mapActions([
+            "saveSearhHistory",
+            "deleteSearhHistory",
+            "clearSearhHistory"
+        ])
     },
     created() {
         this._getHotKey();
     },
     watch: {
         query(newQuery) {
-          if (!newQuery) {
-            this.filterShow = true
-          }
+            if (!newQuery) {
+                this.filterShow = true;
+                setTimeout(() => {
+                    this.$refs.shortcut.refresh();
+                }, 20);
+            }
         }
     },
     components: {
@@ -148,7 +178,8 @@ export default {
         SearchSong,
         SearchSinger,
         SearchDisc,
-        SearchMv
+        SearchMv,
+        Confirm
     }
 };
 </script>
@@ -162,7 +193,7 @@ export default {
     background-color #fff
     padding 10px
     display flex
-    flex-direct row
+    flex-direction row
     align-items center
     .search
         padding-left 10px
@@ -196,24 +227,29 @@ export default {
 .shortcut-wrapper
     margin-top 20px
     width 100%
+    position fixed
+    top 99px
+    bottom 44px
+    left 0
+    right 0
     .shortcut
         height 100%
         overflow hidden
         .hot-key
             margin 0 20px 20px 20px
             .title
-                margin-bottom 20px
+                margin-bottom 10px
                 font-size 14px
                 color black
             .item
                 display inline-block
                 padding 5px 10px
-                margin 0 20px 10px 0
+                margin 0 10px 10px 0
                 border-radius 6px
                 background #ffffff
                 font-size $font-size-medium
                 color black
-                border 1px solid black
+                border 1px solid #cccccc
                 border-radius 10px
                 .sup
                     font-size 12px
@@ -239,19 +275,23 @@ export default {
                     display flex
                     align-items center
                     height 40px
+                    font-size 14px
                     overflow hidden
+                    border-bottom 1px solid rgb(240, 240, 240)
                     &.list-enter-active, &.list-leave-active
                         transition all 0.1s
                     &.list-enter, &.list-leave-to
                         height 0
+                    .history
+                        padding-right 8px
                     .text
                         flex 1
                         color $color-text-l
                     .icon
                         extend-click()
-                        .icon-delete
+                        i
                             font-size $font-size-small
-                            color $color-text-d
+                            color black
 .search-result
     .suggest
         height 100%
@@ -278,7 +318,7 @@ export default {
             left 0
             right 0
             background #ffffff
-            z-index 2  /*不设置该属性，则本cssText的最后一个属性会无效*/
+            z-index 2 /* 不设置该属性，则本cssText的最后一个属性会无效 */
                 .inner
                     height 100%
                     background-color #fff
@@ -310,7 +350,7 @@ export default {
                             no-wrap()
                             width 60%
                         .bottom
-                            color #999999
+                            font-size 12px
                     .mv
                         font-size 25px
         .no-result-wrapper

@@ -33,3 +33,5 @@ export const discHistory = state => state.discHistory
 export const showDisc = state => state.showDisc
 
 export const query = state => state.query
+
+export const searchHistory = state => state.searchHistory

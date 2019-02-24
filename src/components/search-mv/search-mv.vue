@@ -48,6 +48,8 @@ export default {
         if (!this.query || this.query === this.lastQuery) {
             return;
         }
+        this.result = [];
+        this.hasMore = true;        
         this.getSearch(this.query);
     },
     methods: {

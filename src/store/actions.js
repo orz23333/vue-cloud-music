@@ -9,7 +9,10 @@ import {
   saveFavoriteDisc,
   deleteFavoriteDisc,
   savePlayDisc,
-  savePlay
+  savePlay,
+  saveSearch,
+  deleteSearch,
+  clearSearch
 } from "common/js/cache";
 
 function findIndex(list, song) {
@@ -185,5 +188,18 @@ export const saveSongHistory = function ({commit}, song) {
 
 export const saveDiscHistory = function ({commit}, disc) {
   commit(types.SET_DISC_HISTORY, savePlayDisc(disc))
+}
+
+//关于搜索历史的部分
+export const saveSearhHistory = function({commit}, history) {
+  commit(types.SET_SEARCH_HISTORY, saveSearch(history))
+}
+
+export const deleteSearhHistory = function({commit}, history) {
+  commit(types.SET_SEARCH_HISTORY, deleteSearch(history))
+}
+
+export const clearSearhHistory = function({commit}, history) {
+  commit(types.SET_SEARCH_HISTORY, clearSearch(history))
 }
 

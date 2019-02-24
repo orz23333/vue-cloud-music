@@ -63,6 +63,10 @@ const mutations = {
 
   [types.SET_QUERY](state, query) {
     state.query = query
+  },
+
+  [types.SET_SEARCH_HISTORY](state, history) {
+    state.searchHistory = history
   }
 }
 

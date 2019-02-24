@@ -4,7 +4,9 @@
         <tab></tab>
 
         <transition :name="name" v-on:before-enter="beforeEnter">
-            <router-view></router-view>
+            <keep-alive>
+                <router-view></router-view>
+            </keep-alive>
         </transition>
     </div>
 </template>
@@ -24,9 +26,9 @@ export default {
         beforeEnter(el) {
             if (el.className === "findmusic") {
                 this.name = "slideL";
-            } else {
+            } else if (el.className === 'rank') {
                 this.name = "slideR";
-            }
+            } 
         }
     },
     components: {

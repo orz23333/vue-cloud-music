@@ -31,7 +31,7 @@ export default {
             type: String,
             default: ""
         }
-    },    
+    },
     data() {
         return {
             type: 1000,
@@ -40,13 +40,15 @@ export default {
             beforeScroll: true,
             hasMore: true,
             result: [],
-            lastQuery: ''
+            lastQuery: ""
         };
     },
     activated() {
         if (!this.query || this.query === this.lastQuery) {
             return;
         }
+        this.result = [];
+        this.hasMore = true;
         this.getSearch(this.query);
     },
     methods: {
@@ -54,19 +56,19 @@ export default {
             this.changeDisc(id);
         },
         getSearch(query) {
-          this._searchDisc(query)
-        },        
+            this._searchDisc(query);
+        },
         _searchDisc(query) {
             this.page = 0;
             this.hasMore = true;
-            this.lastQuery = query  
+            this.lastQuery = query;
             this.$refs.suggest ? this.$refs.suggest.scrollTo(0, 0) : "";
             search(query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.playlists === 'undefined') {
+                    if (typeof res.result.playlists === "undefined") {
                         this.hasMore = false;
                         return;
-                    }                  
+                    }
                     this.result = this._normalizeDisc(res.result.playlists);
                     this.hasMore = this._checkMore(res.result.playlistCount);
                 }
@@ -79,7 +81,7 @@ export default {
             this.page++;
             search(this.query, this.type, this.page).then(res => {
                 if (res.code === RES_OK) {
-                    if (typeof res.result.playlists === 'undefined') {
+                    if (typeof res.result.playlists === "undefined") {
                         this.hasMore = false;
                         return;
                     }
