@@ -227,7 +227,7 @@ export default {
             .suggest-item
                 display flex
                 align-items center
-                padding 5px 10px
+                padding 10px 10px
                 border-bottom 1px solid rgb(240, 240, 240)
                 &.disable
                     opacity 0.5
@@ -253,6 +253,7 @@ export default {
                         width 60%
                     .bottom
                         color #999999
+                        font-size 12px
                 .mv
                     font-size 25px
     .no-result-wrapper

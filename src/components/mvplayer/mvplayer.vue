@@ -58,9 +58,9 @@
 import { mapGetters, mapMutations } from "vuex";
 import { getMvDetail } from "api/mv";
 import { RES_OK } from "api/config";
-import moment from "moment";
 import Loading from "base/loading/loading";
 import { prefixStyle } from "common/js/dom";
+import { formatDuration } from "common/js/date";
 
 const transform = prefixStyle("transform");
 const progressBtnWidth = 16;
@@ -222,15 +222,7 @@ export default {
             return count;
         },
         _formalTime(t) {
-            let time = moment(t)
-                .utcOffset(0)
-                .format("h:mm:ss");
-            let arr = time.split(":");
-            if (arr[0] === "12") {
-                arr.shift();
-            }
-            time = arr.join(":");
-            return time;
+            return formatDuration(t)
         },
         ...mapMutations({
             setPlayMv: "SET_PLAYMV"

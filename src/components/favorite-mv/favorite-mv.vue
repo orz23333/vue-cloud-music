@@ -15,7 +15,7 @@ import ListBar from "base/list-bar/list-bar";
 import CHeader from "components/header/header";
 import Scroll from "base/scroll/scroll";
 import { mapGetters, mapActions, mapMutations } from "vuex";
-import moment from "moment";
+import { formatDuration } from "common/js/date";
 export default {
     computed: {
         list() {
@@ -40,15 +40,7 @@ export default {
             this.playMv(id);
         },
         _formalTime(t) {
-            let time = moment(t)
-                .utcOffset(0)
-                .format("h:mm:ss");
-            let arr = time.split(":");
-            if (arr[0] === "12") {
-                arr.shift();
-            }
-            time = arr.join(":");
-            return time;
+           return formatDuration(t)
         },
         ...mapActions(["playMv"])
     },

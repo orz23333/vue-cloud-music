@@ -89,7 +89,7 @@ import {
     saveSequenceList,
     saveCurrentIndex
 } from "common/js/cache";
-import moment from "moment";
+import { formatDuration } from "common/js/date";
 export default {
     data() {
         return {
@@ -215,7 +215,7 @@ export default {
             this.setFullScreen(false);
         },
         formatTime(time) {
-            return moment(time).format("m:ss");
+            return formatDuration(time);
         },
         ...mapMutations({
             setFullScreen: "SET_FULL_SCREEN",

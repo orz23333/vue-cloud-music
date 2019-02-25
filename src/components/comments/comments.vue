@@ -3,12 +3,12 @@
         <div class="comment" v-if="hotComments.length">
             <h2 class="title">精彩评论</h2>
             <ul>
-                <li v-for="comment in hotComments" :key="comment.time" class="list-group-item">
+                <li v-for="comment in hotComments" class="list-group-item">
                     <div class="header">
                         <img v-lazy="comment.user.avatarUrl" width="30" class="img">
                         <div class="center">
                             <h3>{{ comment.user.nickname }}</h3>
-                            <span>{{ _normalizeTime(comment.time) }}</span>
+                            <span>{{ format(comment.time) }}</span>
                         </div>
                         <span class="right">
                             <i class="icon-dianzan"></i>
@@ -28,12 +28,12 @@
         <div class="comment" v-if="comments.length">
             <h2 class="title">最新评论({{total}})</h2>
             <ul>
-                <li v-for="comment in comments" :key="comment.time" class="list-group-item">
+                <li v-for="comment in comments" class="list-group-item">
                     <div class="header">
                         <img v-lazy="comment.user.avatarUrl" width="30" class="img">
                         <div class="center">
                             <h3>{{ comment.user.nickname }}</h3>
-                            <span>{{ _normalizeTime(comment.time) }}</span>
+                            <span>{{ format(comment.time) }}</span>
                         </div>
                         <span class="right">
                             <i class="icon-dianzan"></i>
@@ -59,9 +59,7 @@
 
 <script>
 import Loading from "base/loading/loading";
-import moment from "moment";
-moment.locale("zh-cn");
-
+import { formatComment } from "common/js/date";
 export default {
     props: {
         hasMore: {
@@ -86,15 +84,10 @@ export default {
         }
     },
     methods: {
-        _normalizeTime(time) {
-            let date = moment(time).calendar(null, {
-                sameDay: "H:mm",
-                lastDay: "[昨天] H:mm",
-                lastWeek: "MM月DD日",
-                sameElse: "YYYY年MM月DD日"
-            });
-            return date;
+        format(t) {
+          return formatComment(t)
         }
+
     },
     computed: {
         fixed() {
